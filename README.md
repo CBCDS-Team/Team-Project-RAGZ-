@@ -1,26 +1,23 @@
-# CBCDS by Team Ragz 🐾
+#### CBCDS by Team Ragz 🐾
 
-**Cat Behavioural Change Detection System (CBCDS)** monitors cats’ behaviour—feeding, water intake, litter box use, outdoor activity, and hiding—to detect early signs of health issues. Cats often hide discomfort, so CBCDS helps owners spot problems early.  
+CBCDS is the hub for all coding and development work for the Cat Behavioural Change Detection System. Whether we’re working in Python, another programming language, or integrating software with sensors, this repository is where all tasks, scripts, and features come together. Every teammate can contribute, test, and review code, making it easy to collaborate, stay organised, and see progress in real time. This is the space where our ideas turn into working code, and where the team builds CBCDS together. 
 
-This repository is **our central hub for collaboration**, where all coding, scripts, and data analysis live. Every teammate can contribute, review, and learn together.
-
----
-
-## 📂 Folder Structure
+#### 📂Folder Structure:
 
 Organise work by task or module to keep the repo clean:
 
+* Frontend/ # User interface code
 
-/Frontend/ # User interface code
-/Backend/ # Server and API code
-/DataAnalysis/ # Scripts for analysing cat behaviour
-/Sensors/ # Code for sensor integration
-/Docs/ # Documentation, notes, and guides
+* Backend/ # Server and API code
+
+* DataCollection/ # Scripts for collecting and processing sensor data
+
+* Sensors/ # Code for sensor integration
+
+* Docs/ # Documentation, notes, and guides
 
 
----
-
-## 🚀 Getting Started
+#### 🚀 Getting Started
 
 1. **Clone the repository**
 ```bash git clone https://github.com/CBCDS-Team/BCOSC.git
