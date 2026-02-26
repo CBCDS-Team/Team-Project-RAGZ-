@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cat Behaviour Dashboard</title>
+</head>
+<body>
+
+    <h1>Cat Behaviour Dashboard</h1>
+
+    <h2>Litter Box Usage</h2>
+
+    <form method="get">
+        <label for="litter_metric">Select metric:</label>
+
+        <select name="litter_metric" id="litter_metric" onchange="this.form.submit()">
+            <option value="total"
+                {% if selected_metric == "total" %}selected{% endif %}>
+                Total visits
+            </option>
+
+            <option value="avg_per_day"
+                {% if selected_metric == "avg_per_day" %}selected{% endif %}>
+                Average visits per day
+            </option>
+
+            <option value="avg_duration"
+                {% if selected_metric == "avg_duration" %}selected{% endif %}>
+                Average duration (seconds)
+            </option>
+        </select>
+    </form>
+
+    <p><strong>Result:</strong> {{ litter_result }}</p>
+
+</body>
+</html>
