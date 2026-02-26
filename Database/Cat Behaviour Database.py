@@ -47,3 +47,5 @@ connection.commit()
 connection.close()
 
 print("All tables created successfully")
+
+#attempt 1 to commit
