@@ -1,38 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cat Behaviour Dashboard</title>
+<title>Cat Behaviour Dashboard</title>
 </head>
+
 <body>
 
-    <h1>Cat Behaviour Dashboard</h1>
+<h1>Cat Behaviour Dashboard</h1>
 
-    <h2>Litter Box Usage</h2>
+<!-- LITTER -->
 
-    <form method="get">
-        <label for="litter_metric">Select metric:</label>
+<h2>Litter Box Usage</h2>
 
-        <select name="litter_metric" id="litter_metric" onchange="this.form.submit()">
-            <option value="total"
-                {% if selected_metric == "total" %}selected{% endif %}>
-                Total visits
-            </option>
+<form method="get">
 
-            <option value="avg_per_day"
-                {% if selected_metric == "avg_per_day" %}selected{% endif %}>
-                Average visits per day
-            </option>
+<select name="litter_metric" onchange="this.form.submit()">
 
-            <option value="avg_duration"
-                {% if selected_metric == "avg_duration" %}selected{% endif %}>
-                Average duration (seconds)
-            </option>
-        </select>
-    </form>
+<option value="total"
+{% if litter_metric == "total" %}selected{% endif %}>
+Total visits
+</option>
 
-    <p><strong>Result:</strong> {{ litter_result }}</p>
+<option value="avg_duration"
+{% if litter_metric == "avg_duration" %}selected{% endif %}>
+Average duration
+</option>
+
+<option value="abnormal"
+{% if litter_metric == "abnormal" %}selected{% endif %}>
+Abnormal visits
+</option>
+
+</select>
+
+</form>
+
+<p><strong>Result:</strong> {{ litter_result }}</p>
+
+
+<!-- FOOD -->
+
+<h2>Food Intake</h2>
+
+<form method="get">
+
+<select name="food_metric" onchange="this.form.submit()">
+
+<option value="total"
+{% if food_metric == "total" %}selected{% endif %}>
+Total feeding events
+</option>
+
+<option value="total_food"
+{% if food_metric == "total_food" %}selected{% endif %}>
+Total food consumed (grams)
+</option>
+
+<option value="avg_food"
+{% if food_metric == "avg_food" %}selected{% endif %}>
+Average food amount
+</option>
+
+</select>
+
+</form>
+
+<p><strong>Result:</strong> {{ food_result }}</p>
+
+
+<!-- WATER -->
+
+<h2>Water Intake</h2>
+
+<form method="get">
+
+<select name="water_metric" onchange="this.form.submit()">
+
+<option value="total"
+{% if water_metric == "total" %}selected{% endif %}>
+Total drinking events
+</option>
+
+<option value="total_duration"
+{% if water_metric == "total_duration" %}selected{% endif %}>
+Total drinking time
+</option>
+
+<option value="avg_duration"
+{% if water_metric == "avg_duration" %}selected{% endif %}>
+Average drinking duration
+</option>
+
+</select>
+
+</form>
+
+<p><strong>Result:</strong> {{ water_result }}</p>
+
+
+<!-- HIDING -->
+
+<h2>Hiding Behaviour</h2>
+
+<form method="get">
+
+<select name="hiding_metric" onchange="this.form.submit()">
+
+<option value="total"
+{% if hiding_metric == "total" %}selected{% endif %}>
+Total hiding events
+</option>
+
+<option value="avg_duration"
+{% if hiding_metric == "avg_duration" %}selected{% endif %}>
+Average hiding duration
+</option>
+
+<option value="long_hiding"
+{% if hiding_metric == "long_hiding" %}selected{% endif %}>
+Long hiding events
+</option>
+
+</select>
+
+</form>
+
+<p><strong>Result:</strong> {{ hiding_result }}</p>
 
 </body>
 </html>
-
-<!--attempt 1 to push -->
