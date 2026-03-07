@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>About PurrMetrics</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f1b2e;
+    color:white;
+}
+
+.layout{
+    display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:220px;
+    background:#111c34;
+    height:100vh;
+    padding:20px;
+}
+
+.sidebar h2{
+    color:#ffd43b;
+}
+
+.sidebar a{
+    display:block;
+    padding:10px;
+    margin:10px 0;
+    color:white;
+    text-decoration:none;
+    background:#1b2b4d;
+    border-radius:8px;
+}
+
+.sidebar a:hover{
+    background:#2e4577;
+}
+
+/* Main content */
+
+.main{
+    flex:1;
+    padding:30px;
+}
+
+/* Cards */
+
+.card{
+    background:#1a2d52;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.tag{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:6px;
+    margin-right:6px;
+    font-size:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+<h2>PurrMetrics</h2>
+
+<a href="/home">Home</a>
+<a href="/dashboard">Analytics</a>
+<a href="#">Sensors</a>
+<a href="/about">About</a>
+<a href="/alerts">Alerts</a>
+<a href="/calendar">Calendar</a>
+<a href="/detailed-analytics">Detailed Analytics</a>
+
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<h1>About PurrMetrics 🐱</h1>
+
+<div class="card">
+
+<p>
+Cats instinctively hide signs of pain or discomfort, making it difficult
+for owners to notice when something is wrong. PurrMetrics uses sensors
+and data analysis to monitor litter habits, food intake, water
+consumption and movement behaviour, giving owners early insights
+into their cat’s health.
+</p>
+
+<br>
+
+<span class="tag" style="background:#3b82f6;">React Frontend</span>
+<span class="tag" style="background:#10b981;">Flask API</span>
+<span class="tag" style="background:#a855f7;">SQLite DB</span>
+<span class="tag" style="background:#f43f5e;">IoT Sensors</span>
+
+</div>
+
+
+<div class="grid">
+
+<div class="card">
+<h3>The Problem</h3>
+<p>
+Cats often hide illness. By the time symptoms appear, the condition
+may already be serious. Owners have limited ways to track subtle
+behaviour changes in their pets.
+</p>
+</div>
+
+
+<div class="card">
+<h3>The Solution</h3>
+<p>
+PurrMetrics collects behavioural data from sensors attached
+to litter boxes, food bowls and hiding spots. The system
+detects changes in behaviour and displays them through a
+dashboard.
+</p>
+</div>
+
+
+<div class="card">
+<h3>Why We Track</h3>
+<p>
+Food intake, water consumption, litter box usage and hiding
+behaviour can reveal early signs of health issues such as
+kidney disease, infections or stress.
+</p>
+</div>
+
+
+<div class="card">
+<h3>The Benefit</h3>
+<p>
+By analysing behaviour patterns over time, PurrMetrics can
+help owners identify unusual trends and seek veterinary care
+earlier.
+</p>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Project Contributors</h3>
+
+<p>
+Rae-Gene – Backend & Dashboard Development<br>
+Zilwood – Hardware & Sensor Integration<br>
+George – Movement Detection & Raspberry Pi Systems<br>
+Asha – Frontend Design & Visual Interface
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

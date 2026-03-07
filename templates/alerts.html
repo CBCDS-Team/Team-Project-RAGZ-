@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>PurrMetrics Alerts</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f1b2e;
+color:white;
+}
+
+.layout{
+display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:220px;
+background:#111c34;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#ffd43b;
+}
+
+.sidebar a{
+display:block;
+padding:10px;
+margin:10px 0;
+background:#1b2b4d;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+.sidebar a:hover{
+background:#2e4577;
+}
+
+/* Main */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+}
+
+.card{
+background:#1a2d52;
+padding:20px;
+border-radius:15px;
+}
+
+.alert{
+background:#3b1f1f;
+border-left:5px solid #ff4d4d;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+}
+
+.safe{
+background:#1f3b2b;
+border-left:5px solid #22c55e;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<h2>PurrMetrics</h2>
+
+<a href="/home">Home</a>
+<a href="/dashboard">Analytics</a>
+<a href="/alerts">Alerts</a>
+<a href="/about">About</a>
+<a href="/calendar">Calendar</a>
+<a href="/detailed-analytics">Detailed Analytics</a>
+
+</div>
+
+<div class="main">
+
+<h1>Behaviour Alerts</h1>
+
+<h2>Automatic Health Warnings</h2>
+
+{% if alerts_list %}
+
+{% for alert in alerts_list %}
+
+<div class="alert">
+{{ alert }}
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="safe">
+✓ No unusual behaviour patterns detected
+</div>
+
+{% endif %}
+
+<br>
+
+<div class="grid">
+
+<!-- Litter Alerts -->
+
+<div class="card">
+
+<h3>Litter Box Alerts</h3>
+
+{% if abnormal_litter > 0 %}
+
+<div class="alert">
+⚠ {{ abnormal_litter }} abnormal litter visits detected
+</div>
+
+{% else %}
+
+<div class="safe">
+✓ No abnormal litter behaviour detected
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- Hiding Alerts -->
+
+<div class="card">
+
+<h3>Hiding Behaviour Alerts</h3>
+
+{% if long_hiding > 0 %}
+
+<div class="alert">
+⚠ {{ long_hiding }} long hiding events detected
+</div>
+
+{% else %}
+
+<div class="safe">
+✓ Normal hiding behaviour
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- Food Alerts -->
+
+<div class="card">
+
+<h3>Food Intake Alerts</h3>
+
+{% if food_result == 0 %}
+
+<div class="alert">
+⚠ No food intake recorded today
+</div>
+
+{% else %}
+
+<div class="safe">
+✓ Food intake normal
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- Water Alerts -->
+
+<div class="card">
+
+<h3>Water Intake Alerts</h3>
+
+{% if water_result == 0 %}
+
+<div class="alert">
+⚠ No drinking activity detected
+</div>
+
+{% else %}
+
+<div class="safe">
+✓ Water intake normal
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

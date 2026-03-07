@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
@@ -13,12 +13,72 @@ def get_db_connection():
     return conn
 
 
+# -------- LOGIN PAGE --------
 @app.route("/")
+def login_page():
+    return render_template("login.html")
+
+
+# -------- LOGIN PROCESS --------
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    # demo login
+    return redirect("/home")
+
+
+# -------- HOME DASHBOARD --------
+@app.route("/home")
+def home():
+
+    conn = get_db_connection()
+
+    litter_visits = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events"
+    ).fetchone()[0]
+
+    food_total = conn.execute(
+        "SELECT SUM(weight_grams) FROM food_intake"
+    ).fetchone()[0]
+
+    water_total = conn.execute(
+        "SELECT SUM(duration_seconds) FROM water_intake"
+    ).fetchone()[0]
+
+    movement_events = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events"
+    ).fetchone()[0]
+
+    hiding_time = conn.execute(
+        "SELECT SUM(duration_seconds) FROM hiding_events"
+    ).fetchone()[0]
+
+    conn.close()
+
+    litter_trend = "Normal"
+    alert_message = "No unusual behaviour detected"
+
+    return render_template(
+        "home.html",
+        litter_visits=litter_visits or 0,
+        food_total=round(food_total, 2) if food_total else 0,
+        water_total=water_total or 0,
+        movement_events=movement_events or 0,
+        hiding_time=hiding_time or 0,
+        litter_trend=litter_trend,
+        alert_message=alert_message
+    )
+
+
+# -------- ANALYTICS DASHBOARD --------
+@app.route("/dashboard")
 def dashboard():
 
     conn = get_db_connection()
 
-    # -------- LITTER --------
+    # LITTER
     litter_metric = request.args.get("litter_metric", "total")
 
     if litter_metric == "total":
@@ -40,7 +100,7 @@ def dashboard():
         litter_result = 0
 
 
-    # -------- FOOD --------
+    # FOOD
     food_metric = request.args.get("food_metric", "total")
 
     if food_metric == "total":
@@ -62,7 +122,7 @@ def dashboard():
         food_result = 0
 
 
-    # -------- WATER --------
+    # WATER
     water_metric = request.args.get("water_metric", "total")
 
     if water_metric == "total":
@@ -84,7 +144,7 @@ def dashboard():
         water_result = 0
 
 
-    # -------- HIDING --------
+    # HIDING
     hiding_metric = request.args.get("hiding_metric", "total")
 
     if hiding_metric == "total":
@@ -127,7 +187,215 @@ def dashboard():
     )
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/alerts")
+def alerts():
+
+    conn = get_db_connection()
+
+    # ---- Basic alerts ----
+
+    abnormal_litter = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events WHERE duration_seconds > 600"
+    ).fetchone()[0]
+
+    long_hiding = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events WHERE duration_seconds > 900"
+    ).fetchone()[0]
+
+    food_result = conn.execute(
+        "SELECT SUM(weight_grams) FROM food_intake"
+    ).fetchone()[0]
+
+    water_result = conn.execute(
+        "SELECT SUM(duration_seconds) FROM water_intake"
+    ).fetchone()[0]
+
+
+    # ---- Behaviour trend alerts ----
+
+    litter_visits = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events"
+    ).fetchone()[0]
+
+    hiding_total = conn.execute(
+        "SELECT SUM(duration_seconds) FROM hiding_events"
+    ).fetchone()[0]
+
+
+    alerts_list = []
+
+    if litter_visits > 10:
+        alerts_list.append("⚠ Litter box usage unusually high")
+
+    if hiding_total and hiding_total > 2000:
+        alerts_list.append("⚠ Cat hiding more than usual")
+
+    if food_result and food_result < 100:
+        alerts_list.append("⚠ Reduced food intake detected")
+
+    if water_result and water_result > 1500:
+        alerts_list.append("⚠ Excessive water consumption")
+
+
+    conn.close()
+
+    return render_template(
+        "alerts.html",
+        abnormal_litter=abnormal_litter or 0,
+        long_hiding=long_hiding or 0,
+        food_result=food_result or 0,
+        water_result=water_result or 0,
+        alerts_list=alerts_list
+    )
+
+@app.route("/calendar")
+def calendar():
+
+    conn = get_db_connection()
+
+    # get all event dates from litter box usage
+    dates = conn.execute(
+        "SELECT DISTINCT date FROM litter_box_events"
+    ).fetchall()
+
+    conn.close()
+
+    event_days = [row["date"] for row in dates]
+
+    return render_template(
+        "calendar.html",
+        event_days=event_days
+    )
+
+
+@app.route("/detailed-analytics")
+def detailed_analytics():
+
+    conn = get_db_connection()
+
+    litter_avg = conn.execute(
+        "SELECT AVG(duration_seconds) FROM litter_box_events"
+    ).fetchone()[0]
+
+    hiding_avg = conn.execute(
+        "SELECT AVG(duration_seconds) FROM hiding_events"
+    ).fetchone()[0]
+
+    food_total = conn.execute(
+        "SELECT SUM(weight_grams) FROM food_intake"
+    ).fetchone()[0]
+
+    water_total = conn.execute(
+        "SELECT SUM(duration_seconds) FROM water_intake"
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "detailed_analytics.html",
+        litter_avg=litter_avg or 0,
+        hiding_avg=hiding_avg or 0,
+        food_total=food_total or 0,
+        water_total=water_total or 0
+    )
+
+@app.route("/profile", methods=["GET","POST"])
+def profile():
+
+    if request.method == "POST":
+
+        owner_name = request.form.get("owner_name")
+        email = request.form.get("email")
+        cat_name = request.form.get("cat_name")
+        cat_age = request.form.get("cat_age")
+        cat_breed = request.form.get("cat_breed")
+
+        # For now just pass data back to page
+        return render_template(
+            "profile.html",
+            owner_name=owner_name,
+            email=email,
+            cat_name=cat_name,
+            cat_age=cat_age,
+            cat_breed=cat_breed
+        )
+
+    return render_template("profile.html")
+
+
+@app.route("/sensors")
+def sensors():
+
+    conn = get_db_connection()
+
+    litter_events = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events"
+    ).fetchone()[0]
+
+    food_events = conn.execute(
+        "SELECT COUNT(*) FROM food_intake"
+    ).fetchone()[0]
+
+    water_events = conn.execute(
+        "SELECT COUNT(*) FROM water_intake"
+    ).fetchone()[0]
+
+    hiding_events = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events"
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "sensors.html",
+        litter_events=litter_events,
+        food_events=food_events,
+        water_events=water_events,
+        hiding_events=hiding_events
+    )
+
+
+@app.route("/reset-litter")
+def reset_litter():
+
+    conn = get_db_connection()
+
+    conn.execute("DELETE FROM litter_box_events")
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
+
+@app.route("/reset-food")
+def reset_food():
+
+    conn = get_db_connection()
+
+    conn.execute("DELETE FROM food_intake")
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
+
+
+@app.route("/reset-water")
+def reset_water():
+
+    conn = get_db_connection()
+
+    conn.execute("DELETE FROM water_intake")
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
-
-    #First push

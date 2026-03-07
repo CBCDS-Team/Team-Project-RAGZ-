@@ -1,132 +1,245 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Cat Behaviour Dashboard</title>
+
+<title>PurrMetrics Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f1b2e;
+color:white;
+}
+
+.layout{
+display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+width:220px;
+background:#111c34;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#ffd43b;
+}
+
+.sidebar a{
+display:block;
+padding:10px;
+margin:10px 0;
+background:#1b2b4d;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+.sidebar a:hover{
+background:#2e4577;
+}
+
+/* Main */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+}
+
+.card{
+background:#1a2d52;
+padding:20px;
+border-radius:15px;
+}
+
+.stat{
+font-size:28px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.label{
+opacity:0.7;
+font-size:14px;
+margin-top:5px;
+}
+
+canvas{
+margin-top:15px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h1>Cat Behaviour Dashboard</h1>
+<div class="layout">
 
-<!-- LITTER -->
+<div class="sidebar">
 
-<h2>Litter Box Usage</h2>
+<h2>PurrMetrics</h2>
 
-<form method="get">
+<a href="/home">Home</a>
+<a href="/dashboard">Analytics</a>
+<a href="/about">About</a>
+<a href="/alerts">Alerts</a>
+<a href="/calendar">Calendar</a>
+<a href="/detailed-analytics">Detailed Analytics</a>
 
-<select name="litter_metric" onchange="this.form.submit()">
+</div>
 
-<option value="total"
-{% if litter_metric == "total" %}selected{% endif %}>
-Total visits
-</option>
+<div class="main">
 
-<option value="avg_duration"
-{% if litter_metric == "avg_duration" %}selected{% endif %}>
-Average duration
-</option>
+<h1>Analytics Dashboard</h1>
 
-<option value="abnormal"
-{% if litter_metric == "abnormal" %}selected{% endif %}>
-Abnormal visits
-</option>
+<div class="grid">
 
-</select>
+<!-- Litter Box -->
 
-</form>
+<div class="card">
 
-<p><strong>Result:</strong> {{ litter_result }}</p>
+<h3>Litter Box Usage</h3>
 
+<div class="label">Total Visits</div>
+<div class="stat">{{ litter_result }}</div>
 
-<!-- FOOD -->
+<canvas id="litterChart"></canvas>
 
-<h2>Food Intake</h2>
-
-<form method="get">
-
-<select name="food_metric" onchange="this.form.submit()">
-
-<option value="total"
-{% if food_metric == "total" %}selected{% endif %}>
-Total feeding events
-</option>
-
-<option value="total_food"
-{% if food_metric == "total_food" %}selected{% endif %}>
-Total food consumed (grams)
-</option>
-
-<option value="avg_food"
-{% if food_metric == "avg_food" %}selected{% endif %}>
-Average food amount
-</option>
-
-</select>
-
-</form>
-
-<p><strong>Result:</strong> {{ food_result }}</p>
+</div>
 
 
-<!-- WATER -->
+<!-- Food Intake -->
 
-<h2>Water Intake</h2>
+<div class="card">
 
-<form method="get">
+<h3>Food Intake</h3>
 
-<select name="water_metric" onchange="this.form.submit()">
+<div class="label">Total Food Consumed</div>
+<div class="stat">{{ food_result }} g</div>
 
-<option value="total"
-{% if water_metric == "total" %}selected{% endif %}>
-Total drinking events
-</option>
+<canvas id="foodChart"></canvas>
 
-<option value="total_duration"
-{% if water_metric == "total_duration" %}selected{% endif %}>
-Total drinking time
-</option>
-
-<option value="avg_duration"
-{% if water_metric == "avg_duration" %}selected{% endif %}>
-Average drinking duration
-</option>
-
-</select>
-
-</form>
-
-<p><strong>Result:</strong> {{ water_result }}</p>
+</div>
 
 
-<!-- HIDING -->
+<!-- Water Intake -->
 
-<h2>Hiding Behaviour</h2>
+<div class="card">
 
-<form method="get">
+<h3>Water Intake</h3>
 
-<select name="hiding_metric" onchange="this.form.submit()">
+<div class="label">Total Drinking Time</div>
+<div class="stat">{{ water_result }} sec</div>
 
-<option value="total"
-{% if hiding_metric == "total" %}selected{% endif %}>
-Total hiding events
-</option>
+<canvas id="waterChart"></canvas>
 
-<option value="avg_duration"
-{% if hiding_metric == "avg_duration" %}selected{% endif %}>
-Average hiding duration
-</option>
+</div>
 
-<option value="long_hiding"
-{% if hiding_metric == "long_hiding" %}selected{% endif %}>
-Long hiding events
-</option>
 
-</select>
+<!-- Hiding Behaviour -->
 
-</form>
+<div class="card">
 
-<p><strong>Result:</strong> {{ hiding_result }}</p>
+<h3>Hiding Behaviour</h3>
+
+<div class="label">Average Hiding Duration</div>
+<div class="stat">{{ hiding_result }} sec</div>
+
+<canvas id="hidingChart"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* Litter Chart */
+
+new Chart(document.getElementById("litterChart"), {
+type: "line",
+data: {
+labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+datasets: [{
+label: "Visits",
+data: [{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }}],
+borderColor: "#3b82f6",
+fill:false,
+tension:0.3
+}]
+}
+});
+
+
+/* Food Chart */
+
+new Chart(document.getElementById("foodChart"), {
+type: "line",
+data: {
+labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+datasets: [{
+label: "Food (g)",
+data: [{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }}],
+borderColor: "#22c55e",
+fill:false,
+tension:0.3
+}]
+}
+});
+
+
+/* Water Chart */
+
+new Chart(document.getElementById("waterChart"), {
+type: "line",
+data: {
+labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+datasets: [{
+label: "Water (sec)",
+data: [{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }}],
+borderColor: "#38bdf8",
+fill:false,
+tension:0.3
+}]
+}
+});
+
+
+/* Hiding Chart */
+
+new Chart(document.getElementById("hidingChart"), {
+type: "line",
+data: {
+labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+datasets: [{
+label: "Hiding Time",
+data: [{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }}],
+borderColor: "#a855f7",
+fill:false,
+tension:0.3
+}]
+}
+});
+
+</script>
 
 </body>
 </html>
-   --   First push --

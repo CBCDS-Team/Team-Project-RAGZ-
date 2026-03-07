@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>PurrMetrics Detailed Analytics</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f1b2e;
+color:white;
+}
+
+.layout{
+display:flex;
+}
+
+.sidebar{
+width:220px;
+background:#111c34;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#ffd43b;
+}
+
+.sidebar a{
+display:block;
+padding:10px;
+margin:10px 0;
+background:#1b2b4d;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+.sidebar a:hover{
+background:#2e4577;
+}
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+}
+
+.card{
+background:#1a2d52;
+padding:20px;
+border-radius:15px;
+}
+
+.stat{
+font-size:32px;
+font-weight:bold;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<h2>PurrMetrics</h2>
+
+<a href="/home">Home</a>
+<a href="/dashboard">Analytics</a>
+<a href="/calendar">Calendar</a>
+<a href="/detailed-analytics">Detailed Analytics</a>
+<a href="/alerts">Alerts</a>
+<a href="/about">About</a>
+
+</div>
+
+<div class="main">
+
+<h1>Detailed Analytics</h1>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>Average Litter Duration</h3>
+
+<div class="stat">{{ litter_avg }} sec</div>
+
+<p>
+Healthy cats typically use the litter box
+3-5 times per day. Extremely long visits
+may indicate urinary problems.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Average Hiding Duration</h3>
+
+<div class="stat">{{ hiding_avg }} sec</div>
+
+<p>
+Short hiding periods are normal, but
+extended hiding may indicate stress
+or illness.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Total Food Intake</h3>
+
+<div class="stat">{{ food_total }} g</div>
+
+<p>
+Stable food intake indicates healthy
+appetite and behaviour.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Total Water Intake</h3>
+
+<div class="stat">{{ water_total }} sec</div>
+
+<p>
+Sudden increases in water consumption
+can indicate kidney disease or diabetes.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
