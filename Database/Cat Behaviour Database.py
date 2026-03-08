@@ -8,6 +8,30 @@ def create_database():
 
     cursor.execute("PRAGMA foreign_keys = ON")
 
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS users(
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    email TEXT UNIQUE,
+                    password TEXT
+                   )
+                   """)
+
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS profiles(
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       user_id INTEGER,
+                       owner_name TEXT,
+                       cat_name TEXT,
+                       cat_dob TEXT,
+                       gender TEXT,
+                       neutered TEXT,
+                       medical_conditions TEXT,
+                       allergies TEXT,
+                       medication TEXT,
+                       FOREIGN KEY(user_id) REFERENCES users(id)
+                       )
+                   """)
+
     # CATS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS cats (
@@ -65,6 +89,9 @@ def create_database():
         FOREIGN KEY (cat_id) REFERENCES cats(id)
     )
     """)
+
+
+
 
     conn.commit()
     conn.close()

@@ -176,19 +176,32 @@ margin-top:15px;
 
 /* Litter Chart */
 
+const labels = {{ dates | tojson }};
+const data = {{ visits | tojson }};
+
 new Chart(document.getElementById("litterChart"), {
-type: "line",
-data: {
-labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-datasets: [{
-label: "Visits",
-data: [{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }},{{ litter_result }}],
-borderColor: "#3b82f6",
-fill:false,
-tension:0.3
-}]
-}
+    type: "line",
+    data: {
+        labels: labels,
+        datasets: [{
+            label: "Litter Box Visits",
+            data: data,
+            borderColor: "#3b82f6",
+            fill: false,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        }
+    }
 });
+
+
 
 
 /* Food Chart */

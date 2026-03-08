@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Sign Up - PurrMetrics</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f1b2e;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:#1a2d52;
+padding:30px;
+border-radius:15px;
+width:320px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:15px;
+border-radius:6px;
+border:none;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#22c55e;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+a{
+color:#60a5fa;
+text-decoration:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Create Account</h2>
+
+<form method="POST">
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<button type="submit">Sign Up</button>
+
+</form>
+
+<br>
+
+<p>
+Already have an account?
+<a href="/">Login</a>
+</p>
+
+</div>
+
+</body>
+</html>
