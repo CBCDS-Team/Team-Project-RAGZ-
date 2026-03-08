@@ -54,26 +54,30 @@ def login_page():
 # -------- LOGIN PROCESS --------
 @app.route("/login", methods=["POST"])
 def login():
+    @app.route("/login", methods=["POST"])
+    def login():
+        email = request.form["email"]
+        password = request.form["password"]
 
-    email = request.form["email"]
-    password = request.form["password"]
+        conn = get_db_connection()
 
-    conn = get_db_connection()
+        user = conn.execute(
+            "SELECT * FROM users WHERE email=? AND password=?",
+            (email, password)
+        ).fetchone()
 
-    user = conn.execute(
-        "SELECT * FROM users WHERE email=? AND password=?",
-        (email, password)
-    ).fetchone()
+        conn.close()
 
-    conn.close()
+        if user:
+            session["user_id"] = user["id"]
+            session["email"] = user["email"]
 
-    if user:
+            return redirect("/home")
 
-        session["user_id"] = user["id"]
+        return "Invalid login"
 
-        return redirect("/home")
 
-    return "Invalid login"
+
 
 # -----Profile Page -----------
 @app.route("/profile", methods=["GET", "POST"])
