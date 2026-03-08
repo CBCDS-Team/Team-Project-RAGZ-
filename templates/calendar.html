@@ -105,9 +105,22 @@ font-weight:bold;
 
 <div class="calendar">
 
+
 {% for day in range(1,32) %}
 
-{% if day|string in event_days %}
+{% set full_date = "2026-03-" + "%02d"|format(day) %}
+
+{% if full_date in event_days %}
+
+<div class="day event">{{ day }}</div>
+
+{% else %}
+
+<div class="day">{{ day }}</div>
+
+{% endif %}
+
+{% endfor %}
 
 <div class="day event">{{ day }}</div>
 
@@ -122,7 +135,7 @@ font-weight:bold;
 </div>
 
 <p style="margin-top:20px;">
-<span style="color:#22c55e;">● Behaviour detected</span>
+<span style="color:#22c55e;">● Abnormal behaviour detected</span>
 </p>
 
 </div>

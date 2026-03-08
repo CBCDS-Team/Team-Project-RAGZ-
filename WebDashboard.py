@@ -1,6 +1,8 @@
 import sqlite3
 import os
 from datetime import datetime
+from typing import Any
+
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
@@ -15,6 +17,26 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def format_time(seconds):
+
+    if seconds is None:
+        return "0 sec"
+
+    seconds = int(seconds)
+
+    if seconds < 60:
+        return f"{seconds} sec"
+
+    minutes = seconds // 60
+    seconds = seconds % 60
+
+    if minutes < 60:
+        return f"{minutes} min {seconds} sec"
+
+    hours = minutes // 60
+    minutes = minutes % 60
+
+    return f"{hours} hr {minutes} min {seconds} sec"
 
 # -------- REGISTER PAGE --------
 @app.route("/register", methods=["GET", "POST"])
@@ -194,13 +216,13 @@ def dashboard():
     conn = get_db_connection()
 
     chart_data = conn.execute("""
-        SELECT date, COUNT(*) as visits
-        FROM litter_box_events
-        WHERE is_reset_event = 0
-        AND date >= DATE('now','-7 days')
-        GROUP BY date
-        ORDER BY date
-    """).fetchall()
+                              SELECT date, COUNT (*) as visits
+                              FROM litter_box_events
+                              WHERE is_reset_event = 0
+                              GROUP BY date
+                              ORDER BY date
+                                  LIMIT 7
+                              """).fetchall()
 
     dates = []
     visits = []
@@ -308,8 +330,7 @@ def calendar():
     conn = get_db_connection()
 
     dates = conn.execute(
-        "SELECT DISTINCT date FROM litter_box_events WHERE is_reset_event = 0"
-    ).fetchall()
+        "SELECT DISTINCT date FROM litter_box_events WHERE is_abnormal = 1").fetchall()
 
     conn.close()
 
