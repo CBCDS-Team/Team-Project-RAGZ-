@@ -216,21 +216,22 @@ def dashboard():
     conn = get_db_connection()
 
     chart_data = conn.execute("""
-                              SELECT date, COUNT(*) as visits
-                              FROM litter_box_events
-                              WHERE is_reset_event = 0
-                              GROUP BY date
-                              ORDER BY date
-                                  LIMIT 7
-                              """).fetchall()
+        SELECT date, COUNT(*) as visits
+        FROM litter_box_events
+        WHERE is_reset_event = 0
+        GROUP BY date
+        ORDER BY date DESC
+        LIMIT 7
+    """).fetchall()
 
     dates = []
     visits = []
 
     for row in chart_data:
-        day_name = datetime.strptime(row["date"], "%Y-%m-%d").strftime("%a")
-        dates.append(day_name)
-        visits.append(row["visits"])
+        if row["date"]:
+            day_name = datetime.strptime(row["date"], "%Y-%m-%d").strftime("%a")
+            dates.append(day_name)
+            visits.append(row["visits"])
 
     litter_result = conn.execute(
         "SELECT COUNT(*) FROM litter_box_events WHERE is_reset_event=0"
@@ -259,8 +260,6 @@ def dashboard():
         dates=dates,
         visits=visits
     )
-
-
 # -------- ABOUT --------
 @app.route("/about")
 def about():
