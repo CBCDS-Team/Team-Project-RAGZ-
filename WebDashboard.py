@@ -6,8 +6,7 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "purrmetrics_secret"
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_NAME = os.path.join(BASE_DIR, "Database", "cat_behaviour_database.db")
+DB_NAME = "Database/cat_behaviour_database.db"
 
 
 def get_db_connection():
