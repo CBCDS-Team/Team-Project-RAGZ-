@@ -161,13 +161,13 @@ margin-bottom:15px;
 <label>Cat Date of Birth</label>
 <input type="date" name="cat_dob" value="{{ profile.cat_dob if profile else '' }}">
 
-
+<label>Sex</label>
 <select name="cat_sex">
 <option value="Male" {% if profile and profile.cat_sex=="Male" %}selected{% endif %}>Male</option>
 <option value="Female" {% if profile and profile.cat_sex=="Female" %}selected{% endif %}>Female</option>
 </select>
 
-
+<label>Spayed / Neutered</label>
 <select name="cat_neutered">
 <option value="Yes" {% if profile and profile.cat_neutered=="Yes" %}selected{% endif %}>Yes</option>
 <option value="No" {% if profile and profile.cat_neutered=="No" %}selected{% endif %}>No</option>
@@ -175,15 +175,15 @@ margin-bottom:15px;
 
 
 <label>Medical Conditions</label>
-<textarea name="medical_conditions">{{ profile.medical_conditions if profile else '' }}</textarea>
+<textarea name="medical_conditions" placeholder="e.g. arthritis, kidney disease">{{ profile.medical_conditions if profile else '' }}</textarea>
 
 
 <label>Allergies</label>
-<textarea name="allergies">{{ profile.allergies if profile else '' }}</textarea>
+<textarea name="allergies" placeholder="e.g. chicken allergy">{{ profile.allergies if profile else '' }}</textarea>
 
 
 <label>Medication</label>
-<textarea name="medication">{{ profile.medication if profile else '' }}</textarea>
+<textarea name="medication" placeholder="e.g. insulin, antibiotics">{{ profile.medication if profile else '' }}</textarea>
 
 
 <button type="submit">Save Profile</button>
