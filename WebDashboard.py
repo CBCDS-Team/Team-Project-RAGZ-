@@ -370,7 +370,12 @@ def detailed_analytics():
         food_total=food_total or 0,
         water_total=water_total or 0
     )
+@app.route("/logout")
+def logout():
 
+    session.clear()
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run()
