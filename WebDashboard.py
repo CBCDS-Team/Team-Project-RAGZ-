@@ -216,13 +216,13 @@ def dashboard():
     conn = get_db_connection()
 
     chart_data = conn.execute("""
-        SELECT date, COUNT(*) as visits
-        FROM litter_box_events
-        WHERE is_reset_event = 0
-        GROUP BY date
-        ORDER BY date DESC
-        LIMIT 7
-    """).fetchall()
+                              SELECT date, COUNT (*) as visits
+                              FROM litter_box_events
+                              WHERE is_reset_event = 0
+                              GROUP BY date
+                              ORDER BY date ASC
+                                  LIMIT 7
+                              """).fetchall()
 
     dates = []
     visits = []
@@ -249,6 +249,18 @@ def dashboard():
         "SELECT COUNT(*) FROM hiding_events"
     ).fetchone()[0]
 
+    avg_litter = conn.execute(
+        "SELECT AVG(duration_seconds) FROM litter_box_events WHERE is_reset_event=0"
+    ).fetchone()[0]
+
+    avg_water = conn.execute(
+        "SELECT AVG(duration_seconds) FROM water_intake"
+    ).fetchone()[0]
+
+    avg_hiding = conn.execute(
+        "SELECT AVG(duration_seconds) FROM hiding_events"
+    ).fetchone()[0]
+
     conn.close()
 
     return render_template(
@@ -257,6 +269,9 @@ def dashboard():
         food_result=food_result or 0,
         water_result=water_result or 0,
         hiding_result=hiding_result or 0,
+        avg_litter=format_time(avg_litter) if avg_litter else "0 sec",
+        avg_water=format_time(avg_water) if avg_water else "0 sec",
+        avg_hiding=format_time(avg_hiding) if avg_hiding else "0 sec",
         dates=dates,
         visits=visits
     )
@@ -329,7 +344,8 @@ def calendar():
     conn = get_db_connection()
 
     dates = conn.execute(
-        "SELECT DISTINCT date FROM litter_box_events WHERE is_abnormal = 1").fetchall()
+        "SELECT DISTINCT date FROM litter_box_events WHERE is_abnormal = 1 AND date IS NOT NULL"
+    ).fetchall()
 
     conn.close()
 

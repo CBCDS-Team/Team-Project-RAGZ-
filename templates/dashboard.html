@@ -177,8 +177,8 @@ margin-top:15px;
 
 /* Litter Chart */
 
-const labels = {{ dates | tojson }};
-const data = {{ visits | tojson }};
+labels: {{ dates | tojson }},
+data: {{ visits | tojson }},
 
 new Chart(document.getElementById("litterChart"), {
     type: "line",
