@@ -177,8 +177,8 @@ margin-top:15px;
 
 /* Litter Chart */
 
-labels: {{ dates | tojson }},
-data: {{ visits | tojson }},
+const labels = {{ dates | tojson }};
+const data = {{ visits | tojson }};
 
 new Chart(document.getElementById("litterChart"), {
     type: "line",
@@ -193,15 +193,9 @@ new Chart(document.getElementById("litterChart"), {
         }]
     },
     options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: true
-            }
-        }
+        responsive: true
     }
 });
-
 
 
 

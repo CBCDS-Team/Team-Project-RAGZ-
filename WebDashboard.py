@@ -349,7 +349,7 @@ def calendar():
 
     conn.close()
 
-    event_days = [row["date"].split("-")[2] for row in dates if row["date"]]
+    event_days = [str(int(row["date"].split("-")[2])) for row in dates if row["date"]]
 
     return render_template(
         "calendar.html",
