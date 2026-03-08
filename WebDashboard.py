@@ -76,8 +76,13 @@ def login():
     return "Invalid login"
 
 # -----Profile Page -----------
-@app.route("/profile", methods=["GET","POST"])
+@app.route("/profile", methods=["GET", "POST"])
 def profile():
+
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
 
     if request.method == "POST":
 
@@ -92,21 +97,33 @@ def profile():
         allergies = request.form.get("allergies")
         medication = request.form.get("medication")
 
-        return render_template(
-            "profile.html",
-            owner_name=owner_name,
-            email=email,
-            cat_name=cat_name,
-            cat_breed=cat_breed,
-            cat_dob=cat_dob,
-            cat_sex=cat_sex,
-            cat_neutered=cat_neutered,
-            medical_conditions=medical_conditions,
-            allergies=allergies,
-            medication=medication
-        )
+        conn.execute("""
+        INSERT OR REPLACE INTO profiles
+        (user_id, owner_name, cat_name, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            session["user_id"],
+            owner_name,
+            cat_name,
+            cat_dob,
+            cat_sex,
+            cat_neutered,
+            medical_conditions,
+            allergies,
+            medication
+        ))
 
-    return render_template("profile.html")
+        conn.commit()
+
+    profile = conn.execute(
+        "SELECT * FROM profiles WHERE user_id=?",
+        (session["user_id"],)
+    ).fetchone()
+
+    conn.close()
+
+    return render_template("profile.html", profile=profile)
 
 # -------- HOME DASHBOARD --------
 @app.route("/home")

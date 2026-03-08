@@ -145,17 +145,17 @@ margin-bottom:15px;
 <form method="POST">
 
 <label>Owner Name</label>
-<input name="owner_name">
+<input type="text" name="owner_name" value="{{ profile.owner_name if profile else '' }}">
 
 <label>Email</label>
-<input name="email">
+<input type="email" name="email" value="{{ profile.email if profile else '' }}">
 
 
 <label>Cat Name</label>
-<input name="cat_name">
+<input type="text" name="cat_name" value="{{ profile.cat_name if profile else '' }}">
 
 <label>Cat Breed</label>
-<input name="cat_breed">
+<input type="text" name="cat_breed" value="{{ profile.cat_breed if profile else '' }}">
 
 
 <label>Cat Date of Birth</label>
