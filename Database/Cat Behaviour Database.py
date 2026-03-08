@@ -18,17 +18,16 @@ def create_database():
 
     cursor.execute("""
                    CREATE TABLE IF NOT EXISTS profiles(
-                       id INTEGER PRIMARY KEY AUTOINCREMENT,
-                       user_id INTEGER,
-                       owner_name TEXT,
-                       cat_name TEXT,
-                       cat_dob TEXT,
-                       gender TEXT,
-                       neutered TEXT,
-                       medical_conditions TEXT,
-                       allergies TEXT,
-                       medication TEXT,
-                       FOREIGN KEY(user_id) REFERENCES users(id)
+                    user_id INTEGER PRIMARY KEY,
+                    owner_name TEXT,
+                    cat_name TEXT,
+                    cat_dob TEXT,
+                    cat_sex TEXT,
+                    cat_neutered TEXT,
+                    medical_conditions TEXT,
+                    allergies TEXT,
+                    medication TEXT,
+                    FOREIGN KEY(user_id) REFERENCES users(id)
                        )
                    """)
 
@@ -44,17 +43,19 @@ def create_database():
 
     # LITTER EVENTS
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS litter_box_events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cat_id INTEGER NOT NULL,
-        enter_time TEXT,
-        exit_time TEXT,
-        duration_seconds INTEGER,
-        visit_type TEXT,
-        is_abnormal INTEGER DEFAULT 0,
-        FOREIGN KEY (cat_id) REFERENCES cats(id)
-    )
-    """)
+                   CREATE TABLE IF NOT EXISTS litter_box_events(
+                       id INTEGER PRIMARY KEY AUTOINCREMENT,
+                       cat_id INTEGER NOT NULL,
+                       date TEXT,
+                       enter_time TEXT,
+                       exit_time TEXT,
+                       duration_seconds INTEGER,
+                       visit_type TEXT,
+                       is_abnormal INTEGER DEFAULT 0,
+                       is_reset_event INTEGER DEFAULT 0,
+                       FOREIGN KEY(cat_id) REFERENCES cats(id)
+                       )
+                   """)
 
     # FOOD
     cursor.execute("""
