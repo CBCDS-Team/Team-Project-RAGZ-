@@ -202,9 +202,9 @@ def home():
         cat_name=cat_name,
         litter_visits=litter_visits or 0,
         food_total=round(food_total, 2) if food_total else 0,
-        water_total=water_total or 0,
+        water_total=format_time(water_total) if water_total else "0 sec",
         movement_events=movement_events or 0,
-        hiding_time=hiding_time or 0,
+        hiding_time=format_time(hiding_time) if hiding_time else "0 sec",
         greeting=greeting
     )
 
@@ -216,7 +216,7 @@ def dashboard():
     conn = get_db_connection()
 
     chart_data = conn.execute("""
-                              SELECT date, COUNT (*) as visits
+                              SELECT date, COUNT(*) as visits
                               FROM litter_box_events
                               WHERE is_reset_event = 0
                               GROUP BY date
@@ -334,7 +334,7 @@ def calendar():
 
     conn.close()
 
-    event_days = [row["date"] for row in dates]
+    event_days = [row["date"].split("-")[2] for row in dates if row["date"]]
 
     return render_template(
         "calendar.html",
@@ -386,10 +386,10 @@ def detailed_analytics():
 
     return render_template(
         "detailed_analytics.html",
-        litter_avg=litter_avg or 0,
-        hiding_avg=hiding_avg or 0,
-        food_total=food_total or 0,
-        water_total=water_total or 0
+        litter_avg=format_time(litter_avg) if litter_avg else "0 sec",
+        hiding_avg=format_time(hiding_avg) if hiding_avg else "0 sec",
+        food_total=round(food_total, 1) if food_total else 0,
+        water_total=format_time(water_total) if water_total else "0 sec"
     )
 @app.route("/logout")
 def logout():
