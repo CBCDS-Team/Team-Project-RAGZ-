@@ -91,8 +91,7 @@ def create_database():
     )
     """)
 
-
-
+    cursor.execute("ALTER TABLE profiles ADD COLUMN cat_breed TEXT")
 
 
     conn.commit()

@@ -148,7 +148,7 @@ margin-bottom:15px;
 <input type="text" name="owner_name" value="{{ profile.owner_name if profile else '' }}">
 
 <label>Email</label>
-<input type="email" name="email" value="{{ profile.email if profile else '' }}">
+<input type="email" name="email" value="{{ session.email }}">
 
 
 <label>Cat Name</label>
@@ -159,33 +159,31 @@ margin-bottom:15px;
 
 
 <label>Cat Date of Birth</label>
-<input type="date" name="cat_dob">
+<input type="date" name="cat_dob" value="{{ profile.cat_dob if profile else '' }}">
 
 
-<label>Sex</label>
 <select name="cat_sex">
-<option value="Male">Male</option>
-<option value="Female">Female</option>
+<option value="Male" {% if profile and profile.cat_sex=="Male" %}selected{% endif %}>Male</option>
+<option value="Female" {% if profile and profile.cat_sex=="Female" %}selected{% endif %}>Female</option>
 </select>
 
 
-<label>Spayed / Neutered</label>
 <select name="cat_neutered">
-<option value="Yes">Yes</option>
-<option value="No">No</option>
+<option value="Yes" {% if profile and profile.cat_neutered=="Yes" %}selected{% endif %}>Yes</option>
+<option value="No" {% if profile and profile.cat_neutered=="No" %}selected{% endif %}>No</option>
 </select>
 
 
 <label>Medical Conditions</label>
-<textarea name="medical_conditions" placeholder="e.g. arthritis, kidney disease"></textarea>
+<textarea name="medical_conditions">{{ profile.medical_conditions if profile else '' }}</textarea>
 
 
 <label>Allergies</label>
-<textarea name="allergies" placeholder="e.g. chicken allergy"></textarea>
+<textarea name="allergies">{{ profile.allergies if profile else '' }}</textarea>
 
 
 <label>Medication</label>
-<textarea name="medication" placeholder="e.g. insulin, antibiotics"></textarea>
+<textarea name="medication">{{ profile.medication if profile else '' }}</textarea>
 
 
 <button type="submit">Save Profile</button>
