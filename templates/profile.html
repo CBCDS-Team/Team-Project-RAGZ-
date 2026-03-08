@@ -17,6 +17,8 @@ color:white;
 display:flex;
 }
 
+/* Sidebar */
+
 .sidebar{
 width:220px;
 background:#111c34;
@@ -38,19 +40,29 @@ text-decoration:none;
 border-radius:8px;
 }
 
+.sidebar a:hover{
+background:#2e4577;
+}
+
+/* Main */
+
 .main{
 flex:1;
 padding:30px;
 }
 
+/* Profile Card */
+
 .card{
 background:#1a2d52;
-padding:20px;
+padding:25px;
 border-radius:15px;
 max-width:500px;
 }
 
-input{
+/* Inputs */
+
+input, select{
 width:100%;
 padding:10px;
 margin-top:5px;
@@ -59,18 +71,39 @@ border-radius:6px;
 border:none;
 }
 
+/* Text Areas */
+
+textarea{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:15px;
+border-radius:6px;
+border:none;
+resize:vertical;
+}
+
+/* Button */
+
 button{
 padding:10px 15px;
 background:#22c55e;
 border:none;
 border-radius:6px;
 color:white;
+cursor:pointer;
 }
+
+button:hover{
+background:#16a34a;
+}
+
+/* Cat image */
 
 .cat-img{
 width:120px;
 border-radius:10px;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
 </style>
@@ -81,24 +114,29 @@ margin-bottom:10px;
 
 <div class="layout">
 
+<!-- Sidebar -->
+
 <div class="sidebar">
 
 <h2>PurrMetrics</h2>
 
+<a href="/profile">Profile</a>
 <a href="/home">Home</a>
 <a href="/dashboard">Analytics</a>
+<a href="/sensors">Sensors</a>
+<a href="/about">About</a>
+<a href="/alerts">Alerts</a>
 <a href="/calendar">Calendar</a>
 <a href="/detailed-analytics">Detailed Analytics</a>
-<a href="/alerts">Alerts</a>
-<a href="/sensors">Sensors</a>
-<a href="/profile">Profile</a>
-<a href="/about">About</a>
 
 </div>
 
+
+<!-- Main Content -->
+
 <div class="main">
 
-<h1>User Profile</h1>
+<h1>User & Cat Profile</h1>
 
 <div class="card">
 
@@ -112,14 +150,43 @@ margin-bottom:10px;
 <label>Email</label>
 <input name="email">
 
+
 <label>Cat Name</label>
 <input name="cat_name">
 
-<label>Cat Age</label>
-<input name="cat_age">
-
 <label>Cat Breed</label>
 <input name="cat_breed">
+
+
+<label>Cat Date of Birth</label>
+<input type="date" name="cat_dob">
+
+
+<label>Sex</label>
+<select name="cat_sex">
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+</select>
+
+
+<label>Spayed / Neutered</label>
+<select name="cat_neutered">
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select>
+
+
+<label>Medical Conditions</label>
+<textarea name="medical_conditions" placeholder="e.g. arthritis, kidney disease"></textarea>
+
+
+<label>Allergies</label>
+<textarea name="allergies" placeholder="e.g. chicken allergy"></textarea>
+
+
+<label>Medication</label>
+<textarea name="medication" placeholder="e.g. insulin, antibiotics"></textarea>
+
 
 <button type="submit">Save Profile</button>
 

@@ -305,23 +305,30 @@ def detailed_analytics():
 
 @app.route("/profile", methods=["GET","POST"])
 def profile():
-
     if request.method == "POST":
-
         owner_name = request.form.get("owner_name")
         email = request.form.get("email")
         cat_name = request.form.get("cat_name")
-        cat_age = request.form.get("cat_age")
         cat_breed = request.form.get("cat_breed")
+        cat_dob = request.form.get("cat_dob")
+        cat_sex = request.form.get("cat_sex")
+        cat_neutered = request.form.get("cat_neutered")
+        medical_conditions = request.form.get("medical_conditions")
+        allergies = request.form.get("allergies")
+        medication = request.form.get("medication")
 
-        # For now just pass data back to page
         return render_template(
             "profile.html",
             owner_name=owner_name,
             email=email,
             cat_name=cat_name,
-            cat_age=cat_age,
-            cat_breed=cat_breed
+            cat_breed=cat_breed,
+            cat_dob=cat_dob,
+            cat_sex=cat_sex,
+            cat_neutered=cat_neutered,
+            medical_conditions=medical_conditions,
+            allergies=allergies,
+            medication=medication
         )
 
     return render_template("profile.html")
