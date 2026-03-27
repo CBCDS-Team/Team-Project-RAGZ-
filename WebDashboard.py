@@ -244,36 +244,67 @@ def dashboard():
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
 
-    litter_result = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=?",
-        (cat_id,)
-    ).fetchone()[0]
+    # 📊 LITTER (last 7 days)
+    litter_data = conn.execute("""
+        SELECT date, COUNT(*) as visits
+        FROM litter_box_events
+        WHERE cat_id=? AND is_reset_event=0
+        GROUP BY date
+        ORDER BY date ASC
+        LIMIT 7
+    """, (cat_id,)).fetchall()
 
-    food_result = conn.execute(
-        "SELECT SUM(weight_grams) FROM food_intake WHERE cat_id=?",
-        (cat_id,)
-    ).fetchone()[0]
+    dates = []
+    visits = []
 
-    water_result = conn.execute(
-        "SELECT SUM(duration_seconds) FROM water_intake WHERE cat_id=?",
-        (cat_id,)
-    ).fetchone()[0]
+    for row in litter_data:
+        if row["date"]:
+            day = datetime.strptime(row["date"], "%Y-%m-%d").strftime("%a")
+            dates.append(day)
+            visits.append(row["visits"])
 
-    hiding_result = conn.execute(
-        "SELECT COUNT(*) FROM hiding_events WHERE cat_id=?",
-        (cat_id,)
-    ).fetchone()[0]
+    # 📊 FOOD (last 7 entries)
+    food_data = conn.execute("""
+        SELECT timestamp, weight_grams
+        FROM food_intake
+        WHERE cat_id=?
+        ORDER BY timestamp DESC
+        LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    food_values = [row["weight_grams"] for row in food_data][::-1]
+
+    # 📊 WATER
+    water_data = conn.execute("""
+        SELECT timestamp, duration_seconds
+        FROM water_intake
+        WHERE cat_id=?
+        ORDER BY timestamp DESC
+        LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    water_values = [row["duration_seconds"] for row in water_data][::-1]
+
+    # 📊 HIDING
+    hiding_data = conn.execute("""
+        SELECT timestamp, duration_seconds
+        FROM hiding_events
+        WHERE cat_id=?
+        ORDER BY timestamp DESC
+        LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    hiding_values = [row["duration_seconds"] for row in hiding_data][::-1]
 
     conn.close()
 
     return render_template(
         "dashboard.html",
-        litter_result=litter_result or 0,
-        food_result=food_result or 0,
-        water_result=water_result or 0,
-        hiding_result=hiding_result or 0,
-        dates=[],
-        visits=[]
+        dates=dates,
+        visits=visits,
+        food_values=food_values,
+        water_values=water_values,
+        hiding_values=hiding_values
     )
 
 
