@@ -375,6 +375,7 @@ def detailed_analytics():
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
 
+    # 📊 Averages (existing)
     litter_avg = conn.execute(
         "SELECT AVG(duration_seconds) FROM litter_box_events WHERE cat_id=?",
         (cat_id,)
@@ -395,6 +396,36 @@ def detailed_analytics():
         (cat_id,)
     ).fetchone()[0]
 
+    # 📊 Graph data (last 7 entries)
+
+    litter_data = conn.execute("""
+        SELECT duration_seconds FROM litter_box_events
+        WHERE cat_id=? ORDER BY id DESC LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    litter_values = [row["duration_seconds"] for row in litter_data][::-1]
+
+    hiding_data = conn.execute("""
+        SELECT duration_seconds FROM hiding_events
+        WHERE cat_id=? ORDER BY id DESC LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    hiding_values = [row["duration_seconds"] for row in hiding_data][::-1]
+
+    food_data = conn.execute("""
+        SELECT weight_grams FROM food_intake
+        WHERE cat_id=? ORDER BY id DESC LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    food_values = [row["weight_grams"] for row in food_data][::-1]
+
+    water_data = conn.execute("""
+        SELECT duration_seconds FROM water_intake
+        WHERE cat_id=? ORDER BY id DESC LIMIT 7
+    """, (cat_id,)).fetchall()
+
+    water_values = [row["duration_seconds"] for row in water_data][::-1]
+
     conn.close()
 
     return render_template(
@@ -402,7 +433,12 @@ def detailed_analytics():
         litter_avg=format_time(litter_avg),
         hiding_avg=format_time(hiding_avg),
         food_total=food_total or 0,
-        water_total=format_time(water_total)
+        water_total=format_time(water_total),
+
+        litter_values=litter_values,
+        hiding_values=hiding_values,
+        food_values=food_values,
+        water_values=water_values
     )
 
 
