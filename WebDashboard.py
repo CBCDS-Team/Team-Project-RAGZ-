@@ -112,39 +112,69 @@ def profile():
 
     if request.method == "POST":
         owner_name = request.form.get("owner_name")
+        email = request.form.get("email")
         cat_name = request.form.get("cat_name")
+        cat_breed = request.form.get("cat_breed")
+        cat_dob = request.form.get("cat_dob")
+        cat_sex = request.form.get("cat_sex")
+        cat_neutered = request.form.get("cat_neutered")
+        medical_conditions = request.form.get("medical_conditions")
+        allergies = request.form.get("allergies")
+        medication = request.form.get("medication")
 
+        # ✅ Save full profile
         conn.execute("""
         INSERT OR REPLACE INTO profiles
-        (user_id, owner_name, cat_name)
-        VALUES (?, ?, ?)
-        """,
-        (session["user_id"], owner_name, cat_name)
+        (user_id, owner_name, cat_name, cat_breed, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            session["user_id"],
+            owner_name,
+            cat_name,
+            cat_breed,
+            cat_dob,
+            cat_sex,
+            cat_neutered,
+            medical_conditions,
+            allergies,
+            medication
+        ))
+
+        # ✅ Update email in users table
+        conn.execute("""
+        UPDATE users SET email=? WHERE id=?
+        """, (email, session["user_id"]))
+
+        # ✅ ALWAYS create/update cat for this user
+        conn.execute("""
+        INSERT OR REPLACE INTO cats (id, user_id, name)
+        VALUES (
+            (SELECT id FROM cats WHERE user_id=?),
+            ?, ?
         )
-
-        # ✅ CREATE CAT FOR USER IF NOT EXISTS
-        existing_cat = conn.execute(
-            "SELECT * FROM cats WHERE user_id=?",
-            (session["user_id"],)
-        ).fetchone()
-
-        if not existing_cat:
-            conn.execute(
-                "INSERT INTO cats (user_id, name) VALUES (?, ?)",
-                (session["user_id"], cat_name)
-            )
+        """, (session["user_id"], session["user_id"], cat_name))
 
         conn.commit()
 
+    # ✅ Get profile data
     profile = conn.execute(
         "SELECT * FROM profiles WHERE user_id=?",
         (session["user_id"],)
     ).fetchone()
 
+    # ✅ Get email separately
+    user = conn.execute(
+        "SELECT email FROM users WHERE id=?",
+        (session["user_id"],)
+    ).fetchone()
+
     conn.close()
 
-    return render_template("profile.html", profile=profile)
-
+    return render_template(
+        "profile.html",
+        profile=profile,
+        email=user["email"] if user else ""
+    )
 
 # -------- HOME --------
 @app.route("/home")
@@ -153,15 +183,22 @@ def home():
         return redirect("/")
 
     conn = get_db_connection()
-    cat_id = get_user_cat_id(session["user_id"])
 
     profile = conn.execute(
-        "SELECT owner_name, cat_name FROM profiles WHERE user_id=?",
+        "SELECT * FROM profiles WHERE user_id=?",
         (session["user_id"],)
     ).fetchone()
 
-    owner_name = profile["owner_name"] if profile else "User"
-    cat_name = profile["cat_name"] if profile else "your cat"
+    # ✅ Check if profile is incomplete
+    if not profile or not profile["cat_name"]:
+        conn.close()
+        return render_template("home.html", setup_required=True)
+
+    # ✅ Normal flow
+    cat_id = get_user_cat_id(session["user_id"])
+
+    owner_name = profile["owner_name"]
+    cat_name = profile["cat_name"]
 
     litter_visits = conn.execute(
         "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=? AND is_reset_event=0",
@@ -192,6 +229,7 @@ def home():
 
     return render_template(
         "home.html",
+        setup_required=False,
         owner_name=owner_name,
         cat_name=cat_name,
         litter_visits=litter_visits or 0,

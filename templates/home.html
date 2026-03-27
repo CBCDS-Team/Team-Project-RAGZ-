@@ -111,6 +111,22 @@ body{
 
 <div class="main">
 
+{% if setup_required %}
+
+<div class="card" style="background:#3b1f1f; border-left:5px solid #ff4d4d; margin-bottom:20px;">
+    <h2>👋 Welcome!</h2>
+
+    <p>
+        Please head to the <b>Profile</b> tab and enter your details to get started.
+    </p>
+
+    <a href="/profile" style="color:#ffd43b; font-weight:bold;">
+        Go to Profile →
+    </a>
+</div>
+
+{% else %}
+
 <div class="greeting">
 <h1>
 <h1>{{ greeting }} {{ owner_name }} 🐱</h1>
