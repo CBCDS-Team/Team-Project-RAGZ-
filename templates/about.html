@@ -33,9 +33,9 @@ body{
     display:block;
     padding:10px;
     margin:10px 0;
+    background:#1b2b4d;
     color:white;
     text-decoration:none;
-    background:#1b2b4d;
     border-radius:8px;
 }
 
@@ -43,7 +43,7 @@ body{
     background:#2e4577;
 }
 
-/* Main content */
+/* Main */
 
 .main{
     flex:1;
@@ -52,28 +52,37 @@ body{
 
 /* Cards */
 
-.card{
-    background:#1a2d52;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-}
-
 .grid{
     display:grid;
     grid-template-columns:repeat(2,1fr);
     gap:20px;
 }
 
+.card{
+    background:#1a2d52;
+    padding:20px;
+    border-radius:15px;
+}
+
+.big-card{
+    background:#1a2d52;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
+}
+
+/* Tags */
+
 .tag{
     display:inline-block;
-    padding:5px 10px;
-    border-radius:6px;
-    margin-right:6px;
+    padding:6px 10px;
+    border-radius:8px;
     font-size:12px;
+    margin-right:5px;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -83,7 +92,6 @@ body{
 <!-- Sidebar -->
 
 <div class="sidebar">
-
 <h2>PurrMetrics</h2>
 
 <a href="/profile">Profile</a>
@@ -95,7 +103,6 @@ body{
 <a href="/calendar">Calendar</a>
 <a href="/detailed-analytics">Detailed Analytics</a>
 <a href="/logout" style="color:#ff6b6b;">Logout</a>
-
 </div>
 
 <!-- Main -->
@@ -104,80 +111,70 @@ body{
 
 <h1>About PurrMetrics 🐱</h1>
 
-<div class="card">
+<div class="big-card">
 
 <p>
-Cats instinctively hide signs of pain or discomfort, making it difficult
-for owners to notice when something is wrong. PurrMetrics uses sensors
-and data analysis to monitor litter habits, food intake, water
-consumption and movement behaviour, giving owners early insights
-into their cat’s health.
+PurrMetrics is a smart feline monitoring system designed to detect early signs of illness
+through behavioural tracking. Using sensors and data analysis, it monitors litter usage,
+food intake, water consumption, and hiding behaviour.
 </p>
 
 <br>
 
-<span class="tag" style="background:#3b82f6;">React Frontend</span>
-<span class="tag" style="background:#10b981;">Flask API</span>
-<span class="tag" style="background:#a855f7;">SQLite DB</span>
-<span class="tag" style="background:#f43f5e;">IoT Sensors</span>
+<span class="tag" style="background:#3b82f6;">Flask</span>
+<span class="tag" style="background:#10b981;">SQLite</span>
+<span class="tag" style="background:#a855f7;">IoT Sensors</span>
+<span class="tag" style="background:#f43f5e;">Analytics</span>
 
 </div>
-
 
 <div class="grid">
 
 <div class="card">
-<h3>The Problem</h3>
+<h3>🐾 The Problem</h3>
 <p>
-Cats often hide illness. By the time symptoms appear, the condition
-may already be serious. Owners have limited ways to track subtle
-behaviour changes in their pets.
+Cats hide illness extremely well. By the time symptoms appear,
+it may already be serious.
 </p>
 </div>
 
-
 <div class="card">
-<h3>The Solution</h3>
+<h3>💡 The Solution</h3>
 <p>
-PurrMetrics collects behavioural data from sensors attached
-to litter boxes, food bowls and hiding spots. The system
-detects changes in behaviour and displays them through a
-dashboard.
+We track subtle behaviour changes using sensors and visualise
+them through an intuitive dashboard.
 </p>
 </div>
 
-
 <div class="card">
-<h3>Why We Track</h3>
+<h3>📊 What We Track</h3>
 <p>
-Food intake, water consumption, litter box usage and hiding
-behaviour can reveal early signs of health issues such as
-kidney disease, infections or stress.
+• Litter box usage<br>
+• Food intake<br>
+• Water consumption<br>
+• Hiding behaviour
 </p>
 </div>
 
-
 <div class="card">
-<h3>The Benefit</h3>
+<h3>🚀 The Benefit</h3>
 <p>
-By analysing behaviour patterns over time, PurrMetrics can
-help owners identify unusual trends and seek veterinary care
-earlier.
+Early detection of abnormal patterns helps owners act quickly
+and improve their cat’s health outcomes.
 </p>
 </div>
 
 </div>
 
+<div class="big-card">
 
-<div class="card">
-
-<h3>Project Contributors</h3>
+<h3>👥 Team</h3>
 
 <p>
-Rae-Gene – Backend & Dashboard Development<br>
-Zilwood – Hardware & Sensor Integration<br>
-George – Movement Detection & Raspberry Pi Systems<br>
-Asha – Frontend Design & Visual Interface
+Rae-Gene – Backend & Dashboard<br>
+Zilwood – Hardware & Sensors<br>
+George – Motion Detection<br>
+Asha – Frontend Design
 </p>
 
 </div>
