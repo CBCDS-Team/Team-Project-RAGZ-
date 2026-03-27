@@ -200,6 +200,170 @@ def home():
         movement_events=hiding_events or 0,
         hiding_time=format_time(hiding_time)
     )
+@app.route("/alerts")
+def alerts():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    abnormal_litter = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=? AND duration_seconds > 600",
+        (cat_id,)
+    ).fetchone()[0]
+
+    long_hiding = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events WHERE cat_id=? AND duration_seconds > 900",
+        (cat_id,)
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "alerts.html",
+        abnormal_litter=abnormal_litter or 0,
+        long_hiding=long_hiding or 0,
+        alerts_list=[]
+    )
+
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    litter_result = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    food_result = conn.execute(
+        "SELECT SUM(weight_grams) FROM food_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    water_result = conn.execute(
+        "SELECT SUM(duration_seconds) FROM water_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    hiding_result = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "dashboard.html",
+        litter_result=litter_result or 0,
+        food_result=food_result or 0,
+        water_result=water_result or 0,
+        hiding_result=hiding_result or 0,
+        dates=[],
+        visits=[]
+    )
+
+
+@app.route("/calendar")
+def calendar():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    dates = conn.execute(
+        "SELECT DISTINCT date FROM litter_box_events WHERE cat_id=? AND is_abnormal=1",
+        (cat_id,)
+    ).fetchall()
+
+    conn.close()
+
+    event_days = [row["date"].split("-")[2] for row in dates if row["date"]]
+
+    return render_template("calendar.html", event_days=event_days)
+
+
+@app.route("/sensors")
+def sensors():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    litter_events = conn.execute(
+        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    food_events = conn.execute(
+        "SELECT COUNT(*) FROM food_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    water_events = conn.execute(
+        "SELECT COUNT(*) FROM water_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    hiding_events = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "sensors.html",
+        litter_events=litter_events,
+        food_events=food_events,
+        water_events=water_events,
+        hiding_events=hiding_events
+    )
+
+
+@app.route("/detailed-analytics")
+def detailed_analytics():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    litter_avg = conn.execute(
+        "SELECT AVG(duration_seconds) FROM litter_box_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    hiding_avg = conn.execute(
+        "SELECT AVG(duration_seconds) FROM hiding_events WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    food_total = conn.execute(
+        "SELECT SUM(weight_grams) FROM food_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    water_total = conn.execute(
+        "SELECT SUM(duration_seconds) FROM water_intake WHERE cat_id=?",
+        (cat_id,)
+    ).fetchone()[0]
+
+    conn.close()
+
+    return render_template(
+        "detailed_analytics.html",
+        litter_avg=format_time(litter_avg),
+        hiding_avg=format_time(hiding_avg),
+        food_total=food_total or 0,
+        water_total=format_time(water_total)
+    )
 
 
 # -------- LOGOUT --------
