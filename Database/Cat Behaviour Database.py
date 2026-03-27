@@ -34,12 +34,19 @@ def create_database():
     # CATS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS cats (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        weight REAL,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    weight REAL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
     """)
+
+    try:
+        cursor.execute("ALTER TABLE cats ADD COLUMN user_id INTEGER")
+    except sqlite3.OperationalError:
+        pass
 
     # LITTER EVENTS
     cursor.execute("""
@@ -91,13 +98,18 @@ def create_database():
     )
     """)
 
-    cursor.execute("ALTER TABLE profiles ADD COLUMN cat_breed TEXT")
+    try:
+        cursor.execute("ALTER TABLE profiles ADD COLUMN cat_breed TEXT")
+    except sqlite3.OperationalError:
+        pass
 
 
     conn.commit()
     conn.close()
 
     print("Database created successfully.")
+
+
 
 if __name__ == "__main__":
     create_database()

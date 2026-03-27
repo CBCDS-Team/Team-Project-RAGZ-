@@ -1,8 +1,6 @@
 import sqlite3
 import os
 from datetime import datetime
-from typing import Any
-
 from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
@@ -12,13 +10,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "Database", "cat_behaviour_database.db")
 
 
+# -------- DATABASE --------
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     return conn
 
-def format_time(seconds):
 
+def get_user_cat_id(user_id):
+    conn = get_db_connection()
+    cat = conn.execute(
+        "SELECT id FROM cats WHERE user_id=?",
+        (user_id,)
+    ).fetchone()
+    conn.close()
+    return cat["id"] if cat else None
+
+
+# -------- TIME FORMAT --------
+def format_time(seconds):
     if seconds is None:
         return "0 sec"
 
@@ -38,12 +48,11 @@ def format_time(seconds):
 
     return f"{hours} hr {minutes} min {seconds} sec"
 
-# -------- REGISTER PAGE --------
+
+# -------- REGISTER --------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     if request.method == "POST":
-
         email = request.form["email"]
         password = request.form["password"]
 
@@ -55,29 +64,25 @@ def register():
                 (email, password)
             )
             conn.commit()
-
         except:
             conn.close()
             return "User already exists"
 
         conn.close()
-
         return redirect("/")
 
     return render_template("register.html")
 
 
-# -------- LOGIN PAGE --------
+# -------- LOGIN --------
 @app.route("/")
 @app.route("/login")
 def login_page():
     return render_template("login.html")
 
 
-# -------- LOGIN PROCESS --------
 @app.route("/login", methods=["POST"])
 def login():
-
     email = request.form["email"]
     password = request.form["password"]
 
@@ -92,49 +97,42 @@ def login():
 
     if user:
         session["user_id"] = user["id"]
-        session["email"] = user["email"]
-
         return redirect("/home")
 
     return "Invalid login"
 
 
-# -------- PROFILE PAGE --------
+# -------- PROFILE --------
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
-
     if "user_id" not in session:
         return redirect("/")
 
     conn = get_db_connection()
 
     if request.method == "POST":
-
         owner_name = request.form.get("owner_name")
         cat_name = request.form.get("cat_name")
-        cat_dob = request.form.get("cat_dob")
-        cat_sex = request.form.get("cat_sex")
-        cat_neutered = request.form.get("cat_neutered")
-        medical_conditions = request.form.get("medical_conditions")
-        allergies = request.form.get("allergies")
-        medication = request.form.get("medication")
 
         conn.execute("""
         INSERT OR REPLACE INTO profiles
-        (user_id, owner_name, cat_name, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (user_id, owner_name, cat_name)
+        VALUES (?, ?, ?)
         """,
-        (
-            session["user_id"],
-            owner_name,
-            cat_name,
-            cat_dob,
-            cat_sex,
-            cat_neutered,
-            medical_conditions,
-            allergies,
-            medication
-        ))
+        (session["user_id"], owner_name, cat_name)
+        )
+
+        # ✅ CREATE CAT FOR USER IF NOT EXISTS
+        existing_cat = conn.execute(
+            "SELECT * FROM cats WHERE user_id=?",
+            (session["user_id"],)
+        ).fetchone()
+
+        if not existing_cat:
+            conn.execute(
+                "INSERT INTO cats (user_id, name) VALUES (?, ?)",
+                (session["user_id"], cat_name)
+            )
 
         conn.commit()
 
@@ -148,14 +146,14 @@ def profile():
     return render_template("profile.html", profile=profile)
 
 
-# -------- HOME DASHBOARD --------
+# -------- HOME --------
 @app.route("/home")
 def home():
-
     if "user_id" not in session:
         return redirect("/")
 
     conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
 
     profile = conn.execute(
         "SELECT owner_name, cat_name FROM profiles WHERE user_id=?",
@@ -166,35 +164,31 @@ def home():
     cat_name = profile["cat_name"] if profile else "your cat"
 
     litter_visits = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE is_reset_event=0"
+        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=? AND is_reset_event=0",
+        (cat_id,)
     ).fetchone()[0]
 
     food_total = conn.execute(
-        "SELECT SUM(weight_grams) FROM food_intake"
+        "SELECT SUM(weight_grams) FROM food_intake WHERE cat_id=?",
+        (cat_id,)
     ).fetchone()[0]
 
     water_total = conn.execute(
-        "SELECT SUM(duration_seconds) FROM water_intake"
+        "SELECT SUM(duration_seconds) FROM water_intake WHERE cat_id=?",
+        (cat_id,)
     ).fetchone()[0]
 
-    movement_events = conn.execute(
-        "SELECT COUNT(*) FROM hiding_events"
+    hiding_events = conn.execute(
+        "SELECT COUNT(*) FROM hiding_events WHERE cat_id=?",
+        (cat_id,)
     ).fetchone()[0]
 
     hiding_time = conn.execute(
-        "SELECT SUM(duration_seconds) FROM hiding_events"
+        "SELECT SUM(duration_seconds) FROM hiding_events WHERE cat_id=?",
+        (cat_id,)
     ).fetchone()[0]
 
     conn.close()
-
-    hour = datetime.now().hour
-
-    if hour < 12:
-        greeting = "Good morning"
-    elif hour < 18:
-        greeting = "Good afternoon"
-    else:
-        greeting = "Good evening"
 
     return render_template(
         "home.html",
@@ -202,218 +196,19 @@ def home():
         cat_name=cat_name,
         litter_visits=litter_visits or 0,
         food_total=round(food_total, 2) if food_total else 0,
-        water_total=format_time(water_total) if water_total else "0 sec",
-        movement_events=movement_events or 0,
-        hiding_time=format_time(hiding_time) if hiding_time else "0 sec",
-        greeting=greeting
+        water_total=format_time(water_total),
+        movement_events=hiding_events or 0,
+        hiding_time=format_time(hiding_time)
     )
 
 
-# -------- ANALYTICS DASHBOARD --------
-@app.route("/dashboard")
-def dashboard():
-
-    conn = get_db_connection()
-
-    chart_data = conn.execute("""
-                              SELECT date, COUNT (*) as visits
-                              FROM litter_box_events
-                              WHERE is_reset_event = 0
-                              GROUP BY date
-                              ORDER BY date ASC
-                                  LIMIT 7
-                              """).fetchall()
-
-    dates = []
-    visits = []
-
-    for row in chart_data:
-        if row["date"]:
-            day_name = datetime.strptime(row["date"], "%Y-%m-%d").strftime("%a")
-            dates.append(day_name)
-            visits.append(row["visits"])
-
-    litter_result = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE is_reset_event=0"
-    ).fetchone()[0]
-
-    food_result = conn.execute(
-        "SELECT COUNT(*) FROM food_intake"
-    ).fetchone()[0]
-
-    water_result = conn.execute(
-        "SELECT COUNT(*) FROM water_intake"
-    ).fetchone()[0]
-
-    hiding_result = conn.execute(
-        "SELECT COUNT(*) FROM hiding_events"
-    ).fetchone()[0]
-
-    avg_litter = conn.execute(
-        "SELECT AVG(duration_seconds) FROM litter_box_events WHERE is_reset_event=0"
-    ).fetchone()[0]
-
-    avg_water = conn.execute(
-        "SELECT AVG(duration_seconds) FROM water_intake"
-    ).fetchone()[0]
-
-    avg_hiding = conn.execute(
-        "SELECT AVG(duration_seconds) FROM hiding_events"
-    ).fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-        "dashboard.html",
-        litter_result=litter_result or 0,
-        food_result=food_result or 0,
-        water_result=water_result or 0,
-        hiding_result=hiding_result or 0,
-        avg_litter=format_time(avg_litter) if avg_litter else "0 sec",
-        avg_water=format_time(avg_water) if avg_water else "0 sec",
-        avg_hiding=format_time(avg_hiding) if avg_hiding else "0 sec",
-        dates=dates,
-        visits=visits
-    )
-# -------- ABOUT --------
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-
-# -------- ALERTS --------
-@app.route("/alerts")
-def alerts():
-
-    conn = get_db_connection()
-
-    abnormal_litter = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE duration_seconds > 600"
-    ).fetchone()[0]
-
-    long_hiding = conn.execute(
-        "SELECT COUNT(*) FROM hiding_events WHERE duration_seconds > 900"
-    ).fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-        "alerts.html",
-        abnormal_litter=abnormal_litter or 0,
-        long_hiding=long_hiding or 0
-    )
-
-
-# -------- SENSORS --------
-@app.route("/sensors")
-def sensors():
-
-    conn = get_db_connection()
-
-    litter_events = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE is_reset_event=0"
-    ).fetchone()[0]
-
-    food_events = conn.execute(
-        "SELECT COUNT(*) FROM food_intake"
-    ).fetchone()[0]
-
-    water_events = conn.execute(
-        "SELECT COUNT(*) FROM water_intake"
-    ).fetchone()[0]
-
-    hiding_events = conn.execute(
-        "SELECT COUNT(*) FROM hiding_events"
-    ).fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-        "sensors.html",
-        litter_events=litter_events,
-        food_events=food_events,
-        water_events=water_events,
-        hiding_events=hiding_events
-    )
-
-
-# -------- CALENDAR --------
-@app.route("/calendar")
-def calendar():
-
-    conn = get_db_connection()
-
-    dates = conn.execute(
-        "SELECT DISTINCT date FROM litter_box_events WHERE is_abnormal = 1 AND date IS NOT NULL"
-    ).fetchall()
-
-    conn.close()
-
-    event_days = [str(int(row["date"].split("-")[2])) for row in dates if row["date"]]
-
-    return render_template(
-        "calendar.html",
-        event_days=event_days
-    )
-
-
-# -------- RESET --------
-@app.route("/reset-litter")
-def reset_litter():
-
-    conn = get_db_connection()
-
-    conn.execute("""
-        UPDATE litter_box_events
-        SET is_reset_event = 1
-        WHERE is_reset_event = 0
-    """)
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/sensors")
-
-
-# -------- DETAILED ANALYTICS --------
-@app.route("/detailed-analytics")
-def detailed_analytics():
-
-    conn = get_db_connection()
-
-    litter_avg = conn.execute(
-        "SELECT AVG(duration_seconds) FROM litter_box_events WHERE is_reset_event = 0"
-    ).fetchone()[0]
-
-    hiding_avg = conn.execute(
-        "SELECT AVG(duration_seconds) FROM hiding_events"
-    ).fetchone()[0]
-
-    food_total = conn.execute(
-        "SELECT SUM(weight_grams) FROM food_intake"
-    ).fetchone()[0]
-
-    water_total = conn.execute(
-        "SELECT SUM(duration_seconds) FROM water_intake"
-    ).fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-        "detailed_analytics.html",
-        litter_avg=format_time(litter_avg) if litter_avg else "0 sec",
-        hiding_avg=format_time(hiding_avg) if hiding_avg else "0 sec",
-        food_total=round(food_total, 1) if food_total else 0,
-        water_total=format_time(water_total) if water_total else "0 sec"
-    )
+# -------- LOGOUT --------
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
+
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
