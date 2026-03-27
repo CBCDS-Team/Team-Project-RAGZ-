@@ -200,6 +200,15 @@ def home():
         movement_events=hiding_events or 0,
         hiding_time=format_time(hiding_time)
     )
+
+
+@app.route("/about")
+def about():
+    if "user_id" not in session:
+        return redirect("/")
+
+    return render_template("about.html")
+
 @app.route("/alerts")
 def alerts():
     if "user_id" not in session:
