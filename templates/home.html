@@ -137,7 +137,6 @@ body{
 <div class="card">
 <h3>Litter Box</h3>
 <p>{{ litter_visits }} visits</p>
-<p>Status: {{ litter_trend }}</p>
 </div>
 
 <div class="card">
@@ -190,68 +189,6 @@ Time spent hiding today: {{ hiding_time }}.
 </div>
 
 {% endif %}
-
-</div>
-
-
-{% if not setup_required %}
-<div class="card-grid">
-
-<div class="card">
-<h3>Litter Box</h3>
-<p>{{ litter_visits }} visits</p>
-<p>Status: {{ litter_trend }}</p>
-</div>
-
-<div class="card">
-<h3>Food Intake</h3>
-<p>{{ food_total }} g today</p>
-</div>
-
-<div class="card">
-<h3>Water Intake</h3>
-<p>{{ water_total }} today</p>
-</div>
-
-<div class="card">
-<h3>Movement</h3>
-<p>{{ movement_events }} activity events</p>
-</div>
-
-<div class="card">
-<h3>Time in Hiding</h3>
-<p>{{ hiding_time }} </p>
-</div>
-
-<div class="card">
-<h3>Alerts</h3>
-<p>{{ alert_message }}</p>
-</div>
-
-</div>
-
-<div class="feed">
-
-<h3>Behaviour Updates</h3>
-
-<div class="feed-item">
-Litter box used {{ litter_visits }} times today.
-</div>
-
-<div class="feed-item">
-Food intake recorded: {{ food_total }} grams.
-</div>
-
-<div class="feed-item">
-Water drinking duration: {{ water_total }} seconds.
-
-</div>
-
-    <div class="feed-item">
-Time spent hiding today: {{ hiding_time }} seconds.
-</div>
-
-</div>
 
 </div>
 
