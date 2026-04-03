@@ -53,6 +53,21 @@ padding:20px;
 border-radius:15px;
 }
 
+/* HEADER NAV */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.nav-btn{
+color:#ffd43b;
+text-decoration:none;
+font-weight:bold;
+font-size:20px;
+}
+
+/* CALENDAR GRID */
 .calendar{
 display:grid;
 grid-template-columns:repeat(7,1fr);
@@ -60,6 +75,13 @@ gap:10px;
 margin-top:20px;
 }
 
+.day-name{
+text-align:center;
+opacity:0.7;
+font-weight:bold;
+}
+
+/* DAY STYLES */
 .day{
 background:#1b2b4d;
 padding:15px;
@@ -67,10 +89,30 @@ text-align:center;
 border-radius:8px;
 }
 
-.event{
-background:#22c55e;
+.empty{
+background:transparent;
+}
+
+.today{
+border:2px solid #ffd43b;
+}
+
+.warning{
+background:#ffd43b;
 color:black;
 font-weight:bold;
+}
+
+.severe{
+background:#ff4d4d;
+color:white;
+font-weight:bold;
+}
+
+.day-link{
+text-decoration:none;
+color:inherit;
+display:block;
 }
 
 </style>
@@ -99,30 +141,54 @@ font-weight:bold;
 
 <div class="main">
 
-<h1>Behaviour Calendar</h1>
+<div class="header">
+<a class="nav-btn" href="/calendar?month={{ prev_month }}&year={{ prev_year }}">⬅️</a>
+<h1>{{ month }} {{ year }}</h1>
+<a class="nav-btn" href="/calendar?month={{ next_month }}&year={{ next_year }}">➡️</a>
+</div>
 
 <div class="card">
 
 <div class="calendar">
 
-{% for day in range(1,32) %}
+<!-- DAY NAMES -->
+<div class="day-name">Mon</div>
+<div class="day-name">Tue</div>
+<div class="day-name">Wed</div>
+<div class="day-name">Thu</div>
+<div class="day-name">Fri</div>
+<div class="day-name">Sat</div>
+<div class="day-name">Sun</div>
 
-{% if day|string in event_days %}
+<!-- DAYS -->
+{% for week in calendar %}
+    {% for day in week %}
 
-<div class="day event">{{ day }}</div>
+        {% if day == 0 %}
+            <div class="day empty"></div>
 
-{% else %}
+        {% else %}
+            {% set severity = event_days.get(day) %}
 
-<div class="day">{{ day }}</div>
+            <a href="/day/{{ day }}" class="day-link">
+                <div class="day
+                    {% if day == today and month == current_month and year == current_year %}today{% endif %}
+                    {% if severity == 'warning' %}warning{% endif %}
+                    {% if severity == 'severe' %}severe{% endif %}
+                ">
+                    {{ day }}
+                </div>
+            </a>
 
-{% endif %}
+        {% endif %}
 
+    {% endfor %}
 {% endfor %}
 
 </div>
 
 <p style="margin-top:20px;">
-<span style="color:#22c55e;">● Abnormal behaviour detected</span>
+🟡 Warning &nbsp;&nbsp; 🔴 Severe abnormal behaviour
 </p>
 
 </div>

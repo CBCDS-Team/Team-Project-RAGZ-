@@ -2,6 +2,8 @@ import sqlite3
 import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, session
+import calendar
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -365,7 +367,7 @@ def dashboard():
 
 
 @app.route("/calendar")
-def calendar():
+def calendar_view():
     if "user_id" not in session:
         return redirect("/")
 
@@ -373,26 +375,66 @@ def calendar():
     cat_id = get_user_cat_id(session["user_id"])
 
     if not cat_id:
-        return "No cat found. Please complete profile setup."
+        return "No cat found."
 
-    dates = conn.execute(
-        "SELECT DISTINCT date FROM litter_box_events WHERE cat_id=? AND is_abnormal=1",
-        (cat_id,)
-    ).fetchall()
+    # Get month from URL
+    month = request.args.get("month", type=int)
+    year = request.args.get("year", type=int)
+
+    now = datetime.now()
+
+    if not month:
+        month = now.month
+    if not year:
+        year = now.year
+
+    # Handle next/prev logic
+    prev_month = month - 1 if month > 1 else 12
+    prev_year = year if month > 1 else year - 1
+
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+
+    # Get abnormal data
+    dates = conn.execute("""
+        SELECT date, duration_seconds
+        FROM litter_box_events
+        WHERE cat_id=? AND strftime('%m', date)=?
+    """, (cat_id, f"{month:02d}")).fetchall()
 
     conn.close()
 
-    event_days = []
-
+    # Severity mapping
+    event_days = {}
     for row in dates:
-        if row["date"] and "-" in row["date"]:
-            try:
-                event_days.append(row["date"].split("-")[2])
-            except:
-                pass
+        if row["date"]:
+            day = int(row["date"].split("-")[2])
+            duration = row["duration_seconds"] or 0
 
-    return render_template("calendar.html", event_days=event_days)
+            if duration > 900:
+                event_days[day] = "severe"
+            elif duration > 600:
+                event_days[day] = "warning"
+            else:
+                event_days[day] = "normal"
 
+    cal = calendar.monthcalendar(year, month)
+    month_name = calendar.month_name[month]
+
+    return render_template(
+        "calendar.html",
+        calendar=cal,
+        month=month_name,
+        year=year,
+        event_days=event_days,
+        today=now.day,
+        current_month=now.month,
+        current_year=now.year,
+        prev_month=prev_month,
+        prev_year=prev_year,
+        next_month=next_month,
+        next_year=next_year
+    )
 @app.route("/sensors")
 def sensors():
     if "user_id" not in session:
