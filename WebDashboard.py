@@ -1,13 +1,16 @@
 import sqlite3
 import os
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, session
+from werkzeug.utils import secure_filename
 import calendar
 from datetime import datetime
 
 
 app = Flask(__name__)
 app.secret_key = "purrmetrics_secret"
+
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "Database", "cat_behaviour_database.db")
@@ -560,6 +563,21 @@ def detailed_analytics():
 def logout():
     session.clear()
     return redirect("/")
+
+
+@app.route("/upload-cat", methods=["POST"])
+def upload_cat():
+    if "user_id" not in session:
+        return redirect("/")
+
+    file = request.files.get("cat_photo")
+
+    if file and file.filename != "":
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+    return redirect("/profile")
 
 
 if __name__ == "__main__":

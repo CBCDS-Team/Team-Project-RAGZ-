@@ -6,6 +6,46 @@
 
 <style>
 
+.main-container{
+    display:flex;
+    gap:30px;
+}
+
+.main{
+    flex:2;
+}
+
+.side-panel{
+    flex:1;
+    background:#1a2d52;
+    padding:20px;
+    border-radius:15px;
+    height:fit-content;
+}
+
+.cat-image{
+    width:100%;
+    border-radius:15px;
+    margin-bottom:15px;
+}
+
+.side-panel input{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:none;
+}
+
+.side-panel button{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#ffd43b;
+    font-weight:bold;
+    cursor:pointer;
+}
+
 body{
 margin:0;
 font-family:Arial;
@@ -135,6 +175,8 @@ margin-bottom:15px;
 
 <!-- Main Content -->
 
+<div class="main-container">
+
 <div class="main">
 
 <h1>User & Cat Profile</h1>
@@ -190,6 +232,24 @@ margin-bottom:15px;
 <button type="submit">Save Profile</button>
 
 </form>
+
+</form>
+
+</div> <!-- end main -->
+
+<div class="side-panel">
+
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="cat-image">
+
+    <h3>Your Cat 🐾</h3>
+
+    <form method="POST" action="/upload-cat" enctype="multipart/form-data">
+        <input type="file" name="cat_photo">
+        <br><br>
+        <button type="submit">Upload Photo</button>
+    </form>
+
+</div>
 
 </div>
 
