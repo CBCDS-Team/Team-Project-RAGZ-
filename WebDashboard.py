@@ -147,12 +147,10 @@ def profile():
 
         # ✅ ALWAYS create/update cat for this user
         conn.execute("""
-        INSERT OR REPLACE INTO cats (id, user_id, name)
-        VALUES (
-            (SELECT id FROM cats WHERE user_id=?),
-            ?, ?
-        )
-        """, (session["user_id"], session["user_id"], cat_name))
+        INSERT INTO cats (user_id, name)
+        VALUES (?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET name=excluded.name
+        """, (session["user_id"], cat_name))
 
         conn.commit()
 
@@ -196,6 +194,9 @@ def home():
 
     # ✅ Normal flow
     cat_id = get_user_cat_id(session["user_id"])
+
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
 
     owner_name = profile["owner_name"]
     cat_name = profile["cat_name"]
@@ -255,6 +256,9 @@ def alerts():
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
 
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
+
     abnormal_litter = conn.execute(
         "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=? AND duration_seconds > 600",
         (cat_id,)
@@ -281,6 +285,9 @@ def dashboard():
 
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
+
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
 
     # 📊 LITTER (last 7 days)
     litter_data = conn.execute("""
@@ -354,6 +361,9 @@ def calendar():
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
 
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
+
     dates = conn.execute(
         "SELECT DISTINCT date FROM litter_box_events WHERE cat_id=? AND is_abnormal=1",
         (cat_id,)
@@ -361,10 +371,16 @@ def calendar():
 
     conn.close()
 
-    event_days = [row["date"].split("-")[2] for row in dates if row["date"]]
+    event_days = []
+
+    for row in dates:
+        if row["date"] and "-" in row["date"]:
+            try:
+                event_days.append(row["date"].split("-")[2])
+            except:
+                pass
 
     return render_template("calendar.html", event_days=event_days)
-
 
 @app.route("/sensors")
 def sensors():
@@ -373,6 +389,9 @@ def sensors():
 
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
+
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
 
     litter_events = conn.execute(
         "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=?",
@@ -412,6 +431,9 @@ def detailed_analytics():
 
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
+
+    if not cat_id:
+        return "No cat found. Please complete profile setup."
 
     # 📊 Averages (existing)
     litter_avg = conn.execute(

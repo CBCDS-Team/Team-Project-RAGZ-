@@ -207,7 +207,7 @@ data: {
 labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
 datasets: [{
 label: "Food (g)",
-data: [{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }},{{ food_result }}],
+data: {{ food_values | tojson }},
 borderColor: "#22c55e",
 fill:false,
 tension:0.3
@@ -224,7 +224,7 @@ data: {
 labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
 datasets: [{
 label: "Water (sec)",
-data: [{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }},{{ water_result }}],
+data: {{ water_values | tojson }},
 borderColor: "#38bdf8",
 fill:false,
 tension:0.3
@@ -241,7 +241,7 @@ data: {
 labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
 datasets: [{
 label: "Hiding Time",
-data: [{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }},{{ hiding_result }}],
+data: {{ hiding_values | tojson }},
 borderColor: "#a855f7",
 fill:false,
 tension:0.3
