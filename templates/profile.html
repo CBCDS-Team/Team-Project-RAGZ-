@@ -6,147 +6,134 @@
 
 <style>
 
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f1b2e;
+    color:white;
+}
+
+.layout{
+    display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:220px;
+    background:#111c34;
+    height:100vh;
+    padding:20px;
+}
+
+.sidebar h2{
+    color:#ffd43b;
+}
+
+.sidebar a{
+    display:block;
+    padding:10px;
+    margin:10px 0;
+    background:#1b2b4d;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.sidebar a:hover{
+    background:#2e4577;
+}
+
+/* Main Layout */
+
 .main-container{
     display:flex;
-    gap:30px;
+    gap:40px;
+    padding:30px;
+    width:100%;
 }
 
 .main{
     flex:2;
-    padding:30px;
 }
+
+/* Profile Card */
+
+.card{
+    background:#1a2d52;
+    padding:25px;
+    border-radius:15px;
+    max-width:600px;
+}
+
+/* Inputs */
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:none;
+}
+
+textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:none;
+    resize:vertical;
+}
+
+/* Button */
+
+button{
+    padding:10px 15px;
+    background:#22c55e;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#16a34a;
+}
+
+/* SIDE PANEL */
 
 .side-panel{
     flex:1;
-    max-width:300px;  /* 👈 ADD THIS LINE */
+    max-width:280px;
     background:#1a2d52;
     padding:20px;
     border-radius:15px;
     height:fit-content;
 }
 
+/* CAT IMAGE */
+
 .cat-image{
     width:100%;
-    max-width:250px;
+    max-width:220px;
     display:block;
     margin:0 auto 15px;
 }
 
+/* Upload styling */
+
 .side-panel input{
     width:100%;
-    padding:8px;
-    border-radius:8px;
-    border:none;
+    margin-bottom:10px;
 }
 
 .side-panel button{
     width:100%;
-    padding:10px;
-    border:none;
-    border-radius:8px;
     background:#ffd43b;
+    color:black;
     font-weight:bold;
-    cursor:pointer;
-}
-
-body{
-margin:0;
-font-family:Arial;
-background:#0f1b2e;
-color:white;
-}
-
-.layout{
-display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-width:220px;
-background:#111c34;
-height:100vh;
-padding:20px;
-}
-
-.sidebar h2{
-color:#ffd43b;
-}
-
-.sidebar a{
-display:block;
-padding:10px;
-margin:10px 0;
-background:#1b2b4d;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:#2e4577;
-}
-
-/* Main */
-
-.main{
-flex:1;
-padding:30px;
-}
-
-/* Profile Card */
-
-.card{
-background:#1a2d52;
-padding:25px;
-border-radius:15px;
-max-width:500px;
-}
-
-/* Inputs */
-
-input, select{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-border-radius:6px;
-border:none;
-}
-
-/* Text Areas */
-
-textarea{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-border-radius:6px;
-border:none;
-resize:vertical;
-}
-
-/* Button */
-
-button{
-padding:10px 15px;
-background:#22c55e;
-border:none;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#16a34a;
-}
-
-/* Cat image */
-
-.cat-img{
-width:120px;
-border-radius:10px;
-margin-bottom:15px;
 }
 
 </style>
@@ -160,77 +147,89 @@ margin-bottom:15px;
 <!-- Sidebar -->
 
 <div class="sidebar">
+    <h2>PurrMetrics</h2>
 
-<h2>PurrMetrics</h2>
-
-<a href="/profile">Profile</a>
-<a href="/home">Home</a>
-<a href="/dashboard">Analytics</a>
-<a href="/sensors">Sensors</a>
-<a href="/about">About</a>
-<a href="/alerts">Alerts</a>
-<a href="/calendar">Calendar</a>
-<a href="/detailed-analytics">Detailed Analytics</a>
-<a href="/logout" style="color:#ff6b6b;">Logout</a>
-
+    <a href="/profile">Profile</a>
+    <a href="/home">Home</a>
+    <a href="/dashboard">Analytics</a>
+    <a href="/sensors">Sensors</a>
+    <a href="/about">About</a>
+    <a href="/alerts">Alerts</a>
+    <a href="/calendar">Calendar</a>
+    <a href="/detailed-analytics">Detailed Analytics</a>
+    <a href="/logout" style="color:#ff6b6b;">Logout</a>
 </div>
 
-
-<!-- Main Content -->
+<!-- MAIN CONTENT -->
 
 <div class="main-container">
+
+    <!-- LEFT SIDE (FORM) -->
     <div class="main">
 
-<h1>User & Cat Profile</h1>
+        <h1>User & Cat Profile</h1>
 
-<div class="card">
+        <div class="card">
 
-<img src="https://placekitten.com/200/200" class="cat-img">
+            <form method="POST">
 
-<form method="POST">
+                <label>Owner Name</label>
+                <input type="text" name="owner_name" value="{{ profile.owner_name if profile else '' }}">
 
-<!-- ALL YOUR INPUTS -->
+                <label>Email</label>
+                <input type="email" name="email" value="{{ email }}">
 
-<button type="submit">Save Profile</button>
+                <label>Cat Name</label>
+                <input type="text" name="cat_name" value="{{ profile.cat_name if profile else '' }}">
 
-</form>
+                <label>Cat Breed</label>
+                <input type="text" name="cat_breed" value="{{ profile.cat_breed if profile else '' }}">
 
-</div> <!-- CLOSE CARD -->
+                <label>Cat Date of Birth</label>
+                <input type="date" name="cat_dob" value="{{ profile.cat_dob if profile else '' }}">
 
-</div> <!-- ✅ CLOSE MAIN HERE -->
+                <label>Sex</label>
+                <select name="cat_sex">
+                    <option value="Male" {% if profile and profile.cat_sex=="Male" %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if profile and profile.cat_sex=="Female" %}selected{% endif %}>Female</option>
+                </select>
 
-<!-- ✅ NOW THIS IS OUTSIDE MAIN -->
-<div class="side-panel">
+                <label>Spayed / Neutered</label>
+                <select name="cat_neutered">
+                    <option value="Yes" {% if profile and profile.cat_neutered=="Yes" %}selected{% endif %}>Yes</option>
+                    <option value="No" {% if profile and profile.cat_neutered=="No" %}selected{% endif %}>No</option>
+                </select>
 
-    <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="cat-image">
+                <label>Medical Conditions</label>
+                <textarea name="medical_conditions">{{ profile.medical_conditions if profile else '' }}</textarea>
 
-    <h3>Your Cat 🐾</h3>
+                <label>Allergies</label>
+                <textarea name="allergies">{{ profile.allergies if profile else '' }}</textarea>
 
-    <form method="POST" action="/upload-cat" enctype="multipart/form-data">
-        <input type="file" name="cat_photo">
-        <br><br>
-        <button type="submit">Upload Photo</button>
-    </form>
+                <label>Medication</label>
+                <textarea name="medication">{{ profile.medication if profile else '' }}</textarea>
 
-</div>
+                <button type="submit">Save Profile</button>
 
-    <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="cat-image">
+            </form>
 
-    <h3>Your Cat 🐾</h3>
+        </div>
 
-    <form method="POST" action="/upload-cat" enctype="multipart/form-data">
-        <input type="file" name="cat_photo">
-        <br><br>
-        <button type="submit">Upload Photo</button>
-    </form>
+    </div>
 
-</div>
+    <!-- RIGHT SIDE (CAT PANEL) -->
+    <div class="side-panel">
 
-</div> <!-- end main-container -->
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="cat-image">
 
-</div>
+        <h3>Your Cat 🐾</h3>
 
-</div>
+        <form method="POST" action="/upload-cat" enctype="multipart/form-data">
+            <input type="file" name="cat_photo">
+            <button type="submit">Upload Photo</button>
+        </form>
+
+    </div>
 
 </div>
 
