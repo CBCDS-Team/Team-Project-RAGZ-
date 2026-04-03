@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, session
 
+
 app = Flask(__name__)
 app.secret_key = "purrmetrics_secret"
 

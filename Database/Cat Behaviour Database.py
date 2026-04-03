@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 DB_NAME = "cat_behaviour_database.db"
 
