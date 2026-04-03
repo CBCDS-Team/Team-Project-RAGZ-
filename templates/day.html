@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Day View</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#0f1b2e;
+    color:white;
+    padding:30px;
+}
+
+.card{
+    background:#1a2d52;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Day {{ day }}</h1>
+
+{% if events %}
+    {% for event in events %}
+        <div class="card">
+            <p><b>Date:</b> {{ event.date }}</p>
+            <p><b>Duration:</b> {{ event.duration_seconds }} seconds</p>
+            <p><b>Type:</b> {{ event.visit_type }}</p>
+            <p><b>Abnormal:</b> {{ event.is_abnormal }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No data for this day.</p>
+{% endif %}
+
+<a href="/calendar">← Back to calendar</a>
+
+</body>
+</html>

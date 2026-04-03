@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect, session
 from werkzeug.utils import secure_filename
 import calendar
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
@@ -187,7 +189,8 @@ def profile():
     return render_template(
         "profile.html",
         profile=profile,
-        email=user["email"] if user else ""
+        email=user["email"] if user else "",
+        cat_photo=profile["cat_photo"] if profile and profile["cat_photo"] else None
     )
 
 # -------- HOME --------
@@ -576,6 +579,57 @@ def upload_cat():
         filename = secure_filename(file.filename)
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
+
+    return redirect("/profile")
+
+@app.route("/day/<int:day>")
+def day_view(day):
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    if not cat_id:
+        return "No cat found."
+
+    # Get events for that specific day
+    events = conn.execute("""
+        SELECT * FROM litter_box_events
+        WHERE cat_id = ?
+        AND date LIKE ?
+    """, (cat_id, f"%-{day:02d}")).fetchall()
+
+    conn.close()
+
+    return render_template("day.html", day=day, events=events)
+
+
+
+UPLOAD_FOLDER = "static/uploads"
+
+@app.route("/upload-cat", methods=["POST"])
+def upload_cat():
+    if "user_id" not in session:
+        return redirect("/")
+
+    file = request.files.get("cat_photo")
+
+    if file and file.filename != "":
+        filename = secure_filename(file.filename)
+
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(filepath)
+
+        conn = get_db_connection()
+
+        conn.execute(
+            "UPDATE profiles SET cat_photo=? WHERE user_id=?",
+            (filename, session["user_id"])
+        )
+
+        conn.commit()
+        conn.close()
 
     return redirect("/profile")
 

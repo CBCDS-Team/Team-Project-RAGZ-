@@ -28,6 +28,7 @@ def create_database():
                     medical_conditions TEXT,
                     allergies TEXT,
                     medication TEXT,
+                    cat_photo TEXT,
                     FOREIGN KEY(user_id) REFERENCES users(id)
                        )
                    """)

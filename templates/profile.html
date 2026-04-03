@@ -220,7 +220,11 @@ button:hover{
     <!-- RIGHT SIDE (CAT PANEL) -->
     <div class="side-panel">
 
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="cat-image">
+       {% if cat_photo %}
+    <img src="{{ url_for('static', filename='uploads/' + cat_photo) }}" class="cat-image">
+{% else %}
+    <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" class="cat-image">
+{% endif %}
 
         <h3>Your Cat 🐾</h3>
 
