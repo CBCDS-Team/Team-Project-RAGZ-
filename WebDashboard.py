@@ -145,14 +145,24 @@ def profile():
         UPDATE users SET email=? WHERE id=?
         """, (email, session["user_id"]))
 
-        # ✅ ALWAYS create/update cat for this user
-        conn.execute("""
-        INSERT INTO cats (user_id, name)
-        VALUES (?, ?)
-        ON CONFLICT(user_id) DO UPDATE SET name=excluded.name
-        """, (session["user_id"], cat_name))
+        # ✅ Create or update cat safely
+        existing_cat = conn.execute(
+            "SELECT id FROM cats WHERE user_id=?",
+            (session["user_id"],)
+        ).fetchone()
 
+        if existing_cat:
+            conn.execute(
+                "UPDATE cats SET name=? WHERE user_id=?",
+                (cat_name, session["user_id"])
+            )
+        else:
+            conn.execute(
+                "INSERT INTO cats (user_id, name) VALUES (?, ?)",
+                (session["user_id"], cat_name)
+            )
         conn.commit()
+        return redirect("/home")
 
     # ✅ Get profile data
     profile = conn.execute(
