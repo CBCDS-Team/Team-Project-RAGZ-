@@ -16,6 +16,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "Database", "cat_behaviour_database.db")
+print("DB PATH:", DB_NAME)  # 👈 ADD IT HERE
 
 
 # -------- DATABASE --------
@@ -130,33 +131,58 @@ def profile():
         allergies = request.form.get("allergies")
         medication = request.form.get("medication")
 
-        # ✅ Save full profile
-        # 🔹 Get existing cat photo FIRST
-        existing_profile = conn.execute(
-            "SELECT cat_photo FROM profiles WHERE user_id=?",
+        # 🔹 Check if profile exists
+        existing = conn.execute(
+            "SELECT * FROM profiles WHERE user_id=?",
             (session["user_id"],)
         ).fetchone()
 
-        cat_photo = existing_profile["cat_photo"] if existing_profile else None
-
-        # 🔹 Now insert/update safely
-        conn.execute("""
-        INSERT OR REPLACE INTO profiles
-        (user_id, owner_name, cat_name, cat_breed, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication, cat_photo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            session["user_id"],
-            owner_name,
-            cat_name,
-            cat_breed,
-            cat_dob,
-            cat_sex,
-            cat_neutered,
-            medical_conditions,
-            allergies,
-            medication,
-            cat_photo
-        ))
+        if existing:
+            # ✅ UPDATE (safe)
+            conn.execute("""
+                UPDATE profiles SET
+                    owner_name=?,
+                    cat_name=?,
+                    cat_breed=?,
+                    cat_dob=?,
+                    cat_sex=?,
+                    cat_neutered=?,
+                    medical_conditions=?,
+                    allergies=?,
+                    medication=?
+                WHERE user_id=?
+            """, (
+                owner_name,
+                cat_name,
+                cat_breed,
+                cat_dob,
+                cat_sex,
+                cat_neutered,
+                medical_conditions,
+                allergies,
+                medication,
+                session["user_id"]
+            ))
+        else:
+            # ✅ INSERT (only once)
+            conn.execute("""
+                INSERT INTO profiles (
+                    user_id, owner_name, cat_name, cat_breed, cat_dob,
+                    cat_sex, cat_neutered, medical_conditions,
+                    allergies, medication
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                session["user_id"],
+                owner_name,
+                cat_name,
+                cat_breed,
+                cat_dob,
+                cat_sex,
+                cat_neutered,
+                medical_conditions,
+                allergies,
+                medication
+            ))
 
         # ✅ Update email in users table
         conn.execute("""
@@ -607,23 +633,25 @@ def upload_cat():
     if "user_id" not in session:
         return redirect("/")
 
-    file = request.files.get("cat_photo")
+    try:
+        file = request.files.get("cat_photo")
 
-    if file and file.filename != "":
-        filename = secure_filename(file.filename)
+        if file and file.filename != "":
+            filename = secure_filename(file.filename)
 
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(filepath)
 
-        conn = get_db_connection()
+            conn = get_db_connection()
+            conn.execute(
+                "UPDATE profiles SET cat_photo=? WHERE user_id=?",
+                (filename, session["user_id"])
+            )
+            conn.commit()
+            conn.close()
 
-        conn.execute(
-            "UPDATE profiles SET cat_photo=? WHERE user_id=?",
-            (filename, session["user_id"])
-        )
-
-        conn.commit()
-        conn.close()
+    except Exception as e:
+        print("UPLOAD ERROR:", e)
 
     return redirect("/profile")
 
