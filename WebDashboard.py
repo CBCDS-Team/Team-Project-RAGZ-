@@ -6,6 +6,7 @@ import calendar
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+from flask import request, jsonify
 
 
 app = Flask(__name__)
@@ -669,6 +670,50 @@ from Database.Nira_Demo_Data import generate_nira_demo_data
 def generate_demo():
     generate_nira_demo_data(session["user_id"])
     return "Demo data created!"
+
+
+@app.route("/api/sensor-data", methods=["POST"])
+def receive_sensor_data():
+    try:
+        data = request.get_json()
+
+        user_id = data.get("user_id")  # VERY IMPORTANT
+        motion = data.get("motion")
+        vibration = data.get("vibration")
+        timestamp = data.get("timestamp")
+
+        conn = get_db_connection()
+
+        # 🔹 Get user's cat
+        cat = conn.execute(
+            "SELECT id FROM cats WHERE user_id=?",
+            (user_id,)
+        ).fetchone()
+
+        if not cat:
+            return jsonify({"error": "No cat found"}), 400
+
+        cat_id = cat["id"]
+
+        # 🔹 Example: store as hiding event (you can change later)
+        conn.execute("""
+            INSERT INTO hiding_events (cat_id, timestamp, duration_seconds, location)
+            VALUES (?, ?, ?, ?)
+        """, (
+            cat_id,
+            timestamp,
+            30 if motion else 0,
+            "sensor"
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        print("API ERROR:", e)
+        return jsonify({"error": "failed"}), 500
 
 
 if __name__ == "__main__":

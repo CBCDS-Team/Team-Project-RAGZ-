@@ -1,7 +1,8 @@
 import sqlite3
 import os
 
-DB_NAME = "cat_behaviour_database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_NAME = os.path.join(BASE_DIR, "cat_behaviour_database.db")
 
 def create_database():
     conn = sqlite3.connect(DB_NAME)
@@ -112,6 +113,8 @@ def create_database():
     conn.close()
 
     print("Database ready (tables + migrations applied).")
+
+    print("DB PATH:", DB_NAME)
 
 
 if __name__ == "__main__":
