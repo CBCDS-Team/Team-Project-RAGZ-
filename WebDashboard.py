@@ -222,13 +222,19 @@ def profile():
 
     conn.close()
 
+    # ✅ Safe cat_photo handling
+    cat_photo = None
+
+    if profile:
+        if "cat_photo" in profile.keys():
+            cat_photo = profile["cat_photo"]
+
     return render_template(
         "profile.html",
         profile=profile,
         email=user["email"] if user else "",
-        cat_photo=profile["cat_photo"] if profile and profile["cat_photo"] else None
+        cat_photo=cat_photo
     )
-
 # -------- HOME --------
 @app.route("/home")
 def home():
