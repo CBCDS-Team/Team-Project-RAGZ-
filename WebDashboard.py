@@ -28,13 +28,15 @@ def get_db_connection():
 
 def get_user_cat_id(user_id):
     conn = get_db_connection()
+
     cat = conn.execute(
-        "SELECT id FROM cats WHERE user_id=?",
+        "SELECT id FROM cats WHERE user_id=? ORDER BY id DESC LIMIT 1",
         (user_id,)
     ).fetchone()
-    conn.close()
-    return cat["id"] if cat else None
 
+    conn.close()
+
+    return cat["id"] if cat else None
 
 # -------- TIME FORMAT --------
 def format_time(seconds):
@@ -421,9 +423,9 @@ def calendar_view():
 
     conn = get_db_connection()
     cat_id = get_user_cat_id(session["user_id"])
-
     if not cat_id:
-        return "No cat found."
+        return "No cat found for this user."
+
 
     # Get month from URL
     month = request.args.get("month", type=int)
