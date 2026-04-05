@@ -567,21 +567,6 @@ def logout():
     session.clear()
     return redirect("/")
 
-
-@app.route("/upload-cat", methods=["POST"])
-def upload_cat():
-    if "user_id" not in session:
-        return redirect("/")
-
-    file = request.files.get("cat_photo")
-
-    if file and file.filename != "":
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
-
-    return redirect("/profile")
-
 @app.route("/day/<int:day>")
 def day_view(day):
     if "user_id" not in session:
