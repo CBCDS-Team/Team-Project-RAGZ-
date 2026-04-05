@@ -661,6 +661,13 @@ def upload_cat():
 
     return redirect("/profile")
 
+from Database.Nira_Demo_Data import generate_nira_demo_data
+
+@app.route("/generate-demo")
+def generate_demo():
+    generate_nira_demo_data(session["user_id"])
+    return "Demo data created!"
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
