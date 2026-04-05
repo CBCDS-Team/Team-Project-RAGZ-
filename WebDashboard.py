@@ -131,12 +131,19 @@ def profile():
         medication = request.form.get("medication")
 
         # ✅ Save full profile
+        # 🔹 Get existing cat photo FIRST
+        existing_profile = conn.execute(
+            "SELECT cat_photo FROM profiles WHERE user_id=?",
+            (session["user_id"],)
+        ).fetchone()
+
+        cat_photo = existing_profile["cat_photo"] if existing_profile else None
+
+        # 🔹 Now insert/update safely
         conn.execute("""
         INSERT OR REPLACE INTO profiles
         (user_id, owner_name, cat_name, cat_breed, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication, cat_photo)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-            (SELECT cat_photo FROM profiles WHERE user_id=?)
-        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             session["user_id"],
             owner_name,
@@ -148,7 +155,7 @@ def profile():
             medical_conditions,
             allergies,
             medication,
-            session["user_id"]
+            cat_photo
         ))
 
         # ✅ Update email in users table
