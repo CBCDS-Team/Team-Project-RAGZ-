@@ -133,8 +133,10 @@ def profile():
         # ✅ Save full profile
         conn.execute("""
         INSERT OR REPLACE INTO profiles
-        (user_id, owner_name, cat_name, cat_breed, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (user_id, owner_name, cat_name, cat_breed, cat_dob, cat_sex, cat_neutered, medical_conditions, allergies, medication, cat_photo)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+            (SELECT cat_photo FROM profiles WHERE user_id=?)
+        )
         """, (
             session["user_id"],
             owner_name,
@@ -145,7 +147,8 @@ def profile():
             cat_neutered,
             medical_conditions,
             allergies,
-            medication
+            medication,
+            session["user_id"]
         ))
 
         # ✅ Update email in users table
@@ -591,7 +594,6 @@ def day_view(day):
 
 
 
-UPLOAD_FOLDER = "static/uploads"
 
 @app.route("/upload-cat", methods=["POST"])
 def upload_cat():
