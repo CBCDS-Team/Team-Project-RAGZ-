@@ -1,34 +1,48 @@
+from gpiozero import MotionSensor, Button
 import requests
-import time
 import datetime
-import random
+import time
 
-BASE_URL = "http://127.0.0.1:10000/api"
+hiding_sensor = MotionSensor(4)
+water_sensor = MotionSensor(17)
+litter_sensor = Button(27)
+
+BASE_URL = "https://purrmetrics.onrender.com/api"
 
 def now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 while True:
-    event = random.choice(["litter", "food", "water", "hiding"])
 
-    if event == "litter":
-        data = {"user_id": 2, "duration": random.randint(30, 120), "timestamp": now()}
+    hiding_sensor.wait_for_motion()
+    print("Hiding detected")
 
-    elif event == "food":
-        data = {"user_id": 2, "amount": random.randint(10, 50), "timestamp": now()}
+    requests.post(f"{BASE_URL}/hiding", json={
+        "user_id": 2,
+        "duration": 120,
+        "timestamp": now()
+    })
 
-    elif event == "water":
-        data = {"user_id": 2, "duration": random.randint(5, 30), "timestamp": now()}
+    time.sleep(3)
 
-    elif event == "hiding":
-        data = {"user_id": 2, "duration": random.randint(60, 300), "timestamp": now()}
+    if water_sensor.motion_detected:
+        print("Water activity")
 
-    url = f"{BASE_URL}/{event}"
+        requests.post(f"{BASE_URL}/water", json={
+            "user_id": 2,
+            "duration": 10,
+            "timestamp": now()
+        })
 
-    try:
-        r = requests.post(url, json=data)
-        print(event, r.status_code)
-    except Exception as e:
-        print("ERROR:", e)
+        time.sleep(3)
 
-    time.sleep(10)
+    if litter_sensor.is_pressed:
+        print("Litter box used")
+
+        requests.post(f"{BASE_URL}/litter", json={
+            "user_id": 2,
+            "duration": 60,
+            "timestamp": now()
+        })
+
+        time.sleep(3)
