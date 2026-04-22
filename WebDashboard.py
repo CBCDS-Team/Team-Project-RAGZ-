@@ -509,17 +509,17 @@ def sensors():
         return "No cat found. Please complete profile setup."
 
     litter_events = conn.execute(
-        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=?",
+        "SELECT COUNT(*) FROM litter_box_events WHERE cat_id=? AND is_reset_event=0",
         (cat_id,)
     ).fetchone()[0]
 
     food_events = conn.execute(
-        "SELECT COUNT(*) FROM food_intake WHERE cat_id=?",
+        "SELECT COUNT(*) FROM food_intake WHERE cat_id=? AND weight_grams > 0",
         (cat_id,)
     ).fetchone()[0]
 
     water_events = conn.execute(
-        "SELECT COUNT(*) FROM water_intake WHERE cat_id=?",
+        "SELECT COUNT(*) FROM water_intake WHERE cat_id=? AND duration_seconds > 0",
         (cat_id,)
     ).fetchone()[0]
 
