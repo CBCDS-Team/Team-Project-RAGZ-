@@ -727,6 +727,125 @@ def receive_sensor_data():
         return jsonify({"error": "failed"}), 500
 
 
+@app.route("/api/litter", methods=["POST"])
+def add_litter():
+    data = request.get_json()
+    user_id = data.get("user_id")
+    duration = data.get("duration")
+    timestamp = data.get("timestamp")
+
+    conn = get_db_connection()
+
+    cat = conn.execute(
+        "SELECT id FROM cats WHERE user_id=?",
+        (user_id,)
+    ).fetchone()
+
+    if not cat:
+        return jsonify({"error": "No cat found"}), 400
+
+    conn.execute("""
+        INSERT INTO litter_box_events (cat_id, date, duration_seconds)
+        VALUES (?, ?, ?)
+    """, (
+        cat["id"],
+        timestamp.split(" ")[0],
+        duration
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "litter added"})
+
+
+@app.route("/api/food", methods=["POST"])
+def add_food():
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    amount = data.get("amount")
+    timestamp = data.get("timestamp")
+
+    conn = get_db_connection()
+
+    cat = conn.execute(
+        "SELECT id FROM cats WHERE user_id=?",
+        (user_id,)
+    ).fetchone()
+
+    if not cat:
+        return jsonify({"error": "No cat found"}), 400
+
+    conn.execute("""
+        INSERT INTO food_intake (cat_id, timestamp, weight_grams)
+        VALUES (?, ?, ?)
+    """, (cat["id"], timestamp, amount))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "food added"})
+
+
+@app.route("/api/water", methods=["POST"])
+def add_water():
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    duration = data.get("duration")
+    timestamp = data.get("timestamp")
+
+    conn = get_db_connection()
+
+    cat = conn.execute(
+        "SELECT id FROM cats WHERE user_id=?",
+        (user_id,)
+    ).fetchone()
+
+    if not cat:
+        return jsonify({"error": "No cat found"}), 400
+
+    conn.execute("""
+        INSERT INTO water_intake (cat_id, timestamp, duration_seconds)
+        VALUES (?, ?, ?)
+    """, (cat["id"], timestamp, duration))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "water added"})
+
+
+@app.route("/api/hiding", methods=["POST"])
+def add_hiding():
+    data = request.get_json()
+
+    user_id = data.get("user_id")
+    duration = data.get("duration")
+    timestamp = data.get("timestamp")
+
+    conn = get_db_connection()
+
+    cat = conn.execute(
+        "SELECT id FROM cats WHERE user_id=?",
+        (user_id,)
+    ).fetchone()
+
+    if not cat:
+        return jsonify({"error": "No cat found"}), 400
+
+    conn.execute("""
+        INSERT INTO hiding_events (cat_id, timestamp, duration_seconds, location)
+        VALUES (?, ?, ?, ?)
+    """, (cat["id"], timestamp, duration, "sensor"))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "hiding added"})
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)

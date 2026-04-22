@@ -5,51 +5,29 @@ import random
 
 BASE_URL = "https://purrmetrics.onrender.com/api"
 
-def current_time():
+def now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 while True:
+    event = random.choice(["litter", "food", "water", "hiding"])
+
+    if event == "litter":
+        data = {"user_id": 2, "duration": random.randint(30, 120), "timestamp": now()}
+
+    elif event == "food":
+        data = {"user_id": 2, "amount": random.randint(10, 50), "timestamp": now()}
+
+    elif event == "water":
+        data = {"user_id": 2, "duration": random.randint(5, 30), "timestamp": now()}
+
+    elif event == "hiding":
+        data = {"user_id": 2, "duration": random.randint(60, 300), "timestamp": now()}
+
+    url = f"{BASE_URL}/{event}"
+
     try:
-        # Simulate different behaviours randomly
-        event_type = random.choice(["litter", "food", "water", "hiding"])
-
-        if event_type == "litter":
-            data = {
-                "cat_id": 1,
-                "duration": random.randint(30, 90),
-                "timestamp": current_time()
-            }
-            endpoint = "/litter"
-
-        elif event_type == "food":
-            data = {
-                "cat_id": 1,
-                "amount": random.randint(10, 50),
-                "timestamp": current_time()
-            }
-            endpoint = "/food"
-
-        elif event_type == "water":
-            data = {
-                "cat_id": 1,
-                "duration": random.randint(5, 30),
-                "timestamp": current_time()
-            }
-            endpoint = "/water"
-
-        elif event_type == "hiding":
-            data = {
-                "cat_id": 1,
-                "duration": random.randint(60, 300),
-                "timestamp": current_time()
-            }
-            endpoint = "/hiding"
-
-        url = BASE_URL + endpoint
-
-        response = requests.post(url, json=data)
-        print(f"{event_type.upper()} →", response.status_code, response.text)
-
+        r = requests.post(url, json=data)
+        print(event, r.status_code)
     except Exception as e:
         print("ERROR:", e)
 
