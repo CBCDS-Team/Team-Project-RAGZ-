@@ -759,6 +759,26 @@ def add_litter():
     return jsonify({"status": "litter added"})
 
 
+@app.route("/reset-litter", methods=["POST"])
+def reset_litter():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    conn.execute("""
+        INSERT INTO litter_box_events 
+        (cat_id, date, duration_seconds, is_reset_event)
+        VALUES (?, date('now'), 0, 1)
+    """, (cat_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
+
+
 @app.route("/api/food", methods=["POST"])
 def add_food():
     data = request.get_json()
@@ -788,6 +808,25 @@ def add_food():
     return jsonify({"status": "food added"})
 
 
+@app.route("/reset-food", methods=["POST"])
+def reset_food():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    conn.execute("""
+        INSERT INTO food_intake (cat_id, timestamp, weight_grams)
+        VALUES (?, datetime('now'), 0)
+    """, (cat_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
+
+
 @app.route("/api/water", methods=["POST"])
 def add_water():
     data = request.get_json()
@@ -815,6 +854,24 @@ def add_water():
     conn.close()
 
     return jsonify({"status": "water added"})
+
+@app.route("/reset-water", methods=["POST"])
+def reset_water():
+    if "user_id" not in session:
+        return redirect("/")
+
+    conn = get_db_connection()
+    cat_id = get_user_cat_id(session["user_id"])
+
+    conn.execute("""
+        INSERT INTO water_intake (cat_id, timestamp, duration_seconds)
+        VALUES (?, datetime('now'), 0)
+    """, (cat_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/sensors")
 
 
 @app.route("/api/hiding", methods=["POST"])

@@ -128,9 +128,9 @@ font-size:14px;
 
 <p>Total Events Recorded: {{ litter_events }}</p>
 
-<a href="/reset-litter">
-<button>Reset Litter Box</button>
-</a>
+<form method="POST" action="/reset-litter">
+    <button type="submit">Reset Litter Box</button>
+</form>
 
 <p class="note">
 Use this when you change the litter tray so weight changes
@@ -150,9 +150,9 @@ are ignored in behaviour analysis.
 
 <p>Total Events Recorded: {{ food_events }}</p>
 
-<a href="/reset-food">
-<button>Reset Food Bowl</button>
-</a>
+<form method="POST" action="/reset-food">
+    <button type="submit">Reset Food Bowl</button>
+</form>
 
 <p class="note">
 Press this after refilling the food bowl so the system
@@ -172,9 +172,9 @@ does not interpret the weight increase as eating behaviour.
 
 <p>Total Events Recorded: {{ water_events }}</p>
 
-<a href="/reset-water">
-<button>Reset Water Bowl</button>
-</a>
+<form method="POST" action="/reset-water">
+    <button type="submit">Reset Water Bowl</button>
+</form>
 
 <p class="note">
 Press this after refilling the water bowl so the weight
