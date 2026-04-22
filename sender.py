@@ -3,7 +3,7 @@ import time
 import datetime
 import random
 
-BASE_URL = "https://purrmetrics.onrender.com/api"
+BASE_URL = "http://127.0.0.1:10000/api"
 
 def now():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
