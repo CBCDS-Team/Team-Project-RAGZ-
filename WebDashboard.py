@@ -7,10 +7,20 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 from flask import request, jsonify
+from datetime import timedelta
+
 
 
 app = Flask(__name__)
 app.secret_key = "purrmetrics_secret"
+
+app.permanent_session_lifetime = timedelta(days=7)
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+if "RENDER" in os.environ:
+    app.config["SESSION_COOKIE_SECURE"] = True
+else:
+    app.config["SESSION_COOKIE_SECURE"] = False
 
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -109,6 +119,7 @@ def login():
 
     if user:
         session["user_id"] = user["id"]
+        session.permanent = True
         return redirect("/home")
 
     return "Invalid login"
