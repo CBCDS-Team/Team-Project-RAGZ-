@@ -2,101 +2,25 @@
 <html>
 <head>
 <title>PurrMetrics Dashboard</title>
-
 <style>
-
-body{
-    margin:0;
-    font-family:Arial, Helvetica, sans-serif;
-    background:#0f1b2e;
-    color:white;
-}
-
-.layout{
-    display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-    width:220px;
-    background:#111c34;
-    height:100vh;
-    padding:20px;
-}
-
-.sidebar h2{
-    color:#ffd43b;
-}
-
-.sidebar a{
-    display:block;
-    padding:10px;
-    margin:10px 0;
-    color:white;
-    text-decoration:none;
-    background:#1b2b4d;
-    border-radius:8px;
-}
-
-.sidebar a:hover{
-    background:#2e4577;
-}
-
-/* Main content */
-
-.main{
-    flex:1;
-    padding:30px;
-}
-
-/* Greeting */
-
-.greeting{
-    background:#1a2d52;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:25px;
-}
-
-/* Cards */
-
-.card-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-.card{
-    background:#1a2d52;
-    padding:20px;
-    border-radius:15px;
-}
-
-/* Behaviour feed */
-
-.feed{
-    margin-top:25px;
-}
-
-.feed-item{
-    background:#162746;
-    padding:12px;
-    margin-bottom:10px;
-    border-radius:8px;
-}
-
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0f1b2e;color:white;}
+.layout{display:flex;}
+.sidebar{width:220px;background:#111c34;height:100vh;padding:20px;}
+.sidebar h2{color:#ffd43b;}
+.sidebar a{display:block;padding:10px;margin:10px 0;color:white;text-decoration:none;background:#1b2b4d;border-radius:8px;}
+.sidebar a:hover{background:#2e4577;}
+.main{flex:1;padding:30px;}
+.greeting{background:#1a2d52;padding:20px;border-radius:15px;margin-bottom:25px;}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.card{background:#1a2d52;padding:20px;border-radius:15px;}
+.feed{margin-top:25px;}
+.feed-item{background:#162746;padding:12px;margin-bottom:10px;border-radius:8px;}
 </style>
 </head>
-
 <body>
-
 <div class="layout">
-
 <div class="sidebar">
-
 <h2>PurrMetrics</h2>
-
 <a href="/profile">Profile</a>
 <a href="/home">Home</a>
 <a href="/dashboard">Analytics</a>
@@ -106,93 +30,41 @@ body{
 <a href="/calendar">Calendar</a>
 <a href="/detailed-analytics">Detailed Analytics</a>
 <a href="/logout" style="color:#ff6b6b;">Logout</a>
-
 </div>
-
 <div class="main">
-
 {% if setup_required %}
-
-<div class="card" style="background:#3b1f1f; border-left:5px solid #ff4d4d; margin-bottom:20px;">
+<div class="card" style="background:#3b1f1f;border-left:5px solid #ff4d4d;margin-bottom:20px;">
     <h2>👋 Welcome!</h2>
-
-    <p>
-        Please head to the <b>Profile</b> tab and enter your details to get started.
-    </p>
-
-    <a href="/profile" style="color:#ffd43b; font-weight:bold;">
-        Go to Profile →
-    </a>
+    <p>Please head to the <b>Profile</b> tab and enter your details to get started.</p>
+    <a href="/profile" style="color:#ffd43b;font-weight:bold;">Go to Profile →</a>
 </div>
-
 {% else %}
-
 <div class="greeting">
-    <h1> Hi {{ owner_name }} 🐱</h1>
+    <h1>Hi {{ owner_name }} 🐱</h1>
     <p>Here's {{ cat_name }}'s behaviour summary for today.</p>
 </div>
-
 <div class="card-grid">
-
 <div class="card">
-<h3>Litter Box</h3>
-<p>{{ litter_visits }} visits</p>
+    <h3>🚽 Litter Box</h3>
+    <p>{{ litter_visits }} visits today</p>
 </div>
-
 <div class="card">
-<h3>Food Intake</h3>
-<p>{{ food_total }} g today</p>
+    <h3>🍽️ Food Bowl</h3>
+    <p>{{ food_total }} visits today</p>
 </div>
-
 <div class="card">
-<h3>Water Intake</h3>
-<p>{{ water_total }} today</p>
+    <h3>💧 Water Bowl</h3>
+    <p>{{ water_total }} today</p>
 </div>
-
-<div class="card">
-<h3>Movement</h3>
-<p>{{ movement_events }} activity events</p>
 </div>
-
-<div class="card">
-<h3>Time in Hiding</h3>
-<p>{{ hiding_time }}</p>
-</div>
-
-<div class="card">
-<h3>Alerts</h3>
-<p>{{ alert_message }}</p>
-</div>
-
-</div>
-
 <div class="feed">
-
 <h3>Behaviour Updates</h3>
-
-<div class="feed-item">
-Litter box used {{ litter_visits }} times today.
+<div class="feed-item">🚽 Litter box visited {{ litter_visits }} times today.</div>
+<div class="feed-item">🍽️ Food bowl activity recorded: {{ food_total }} visits.</div>
+<div class="feed-item">💧 Time spent drinking today: {{ water_total }}.</div>
 </div>
-
-<div class="feed-item">
-Food intake recorded: {{ food_total }} grams.
-</div>
-
-<div class="feed-item">
-Water drinking duration: {{ water_total }}.
-</div>
-
-<div class="feed-item">
-Time spent hiding today: {{ hiding_time }}.
-</div>
-
-</div>
-
 {% endif %}
-
 </div>
-
 </div>
-
 </body>
 </html>

@@ -1,105 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>PurrMetrics Sensors</title>
-
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#0f1b2e;
-color:white;
-}
-
-.layout{
-display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-width:220px;
-background:#111c34;
-height:100vh;
-padding:20px;
-}
-
-.sidebar h2{
-color:#ffd43b;
-}
-
-.sidebar a{
-display:block;
-padding:10px;
-margin:10px 0;
-background:#1b2b4d;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:#2e4577;
-}
-
-/* Main */
-
-.main{
-flex:1;
-padding:30px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:20px;
-}
-
-.card{
-background:#1a2d52;
-padding:20px;
-border-radius:15px;
-}
-
-.status{
-color:#22c55e;
-font-weight:bold;
-}
-
-button{
-margin-top:10px;
-padding:10px;
-background:#ef4444;
-border:none;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#dc2626;
-}
-
-.note{
-margin-top:15px;
-opacity:0.8;
-font-size:14px;
-}
-
+body{margin:0;font-family:Arial;background:#0f1b2e;color:white;}
+.layout{display:flex;}
+.sidebar{width:220px;background:#111c34;height:100vh;padding:20px;}
+.sidebar h2{color:#ffd43b;}
+.sidebar a{display:block;padding:10px;margin:10px 0;background:#1b2b4d;color:white;text-decoration:none;border-radius:8px;}
+.sidebar a:hover{background:#2e4577;}
+.main{flex:1;padding:30px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.card{background:#1a2d52;padding:20px;border-radius:15px;}
+.status{color:#22c55e;font-weight:bold;}
+button{margin-top:10px;padding:10px;background:#ef4444;border:none;border-radius:6px;color:white;cursor:pointer;width:100%;}
+button:hover{background:#dc2626;}
+.note{margin-top:15px;opacity:0.8;font-size:14px;}
+.count{font-size:28px;font-weight:bold;color:#ffd43b;margin:10px 0;}
 </style>
-
 </head>
-
 <body>
-
 <div class="layout">
-
 <div class="sidebar">
-
 <h2>PurrMetrics</h2>
-
 <a href="/profile">Profile</a>
 <a href="/home">Home</a>
 <a href="/dashboard">Analytics</a>
@@ -109,103 +32,49 @@ font-size:14px;
 <a href="/calendar">Calendar</a>
 <a href="/detailed-analytics">Detailed Analytics</a>
 <a href="/logout" style="color:#ff6b6b;">Logout</a>
-
 </div>
-
 <div class="main">
-
 <h1>Sensor Status</h1>
-
 <div class="grid">
 
 <!-- Litter Sensor -->
-
 <div class="card">
-
-<h3>Litter Box Sensor</h3>
-
-<p>Status: <span class="status">Active</span></p>
-
-<p>Total Events Recorded: {{ litter_events }}</p>
-
+<h3>🚽 Litter Box Sensor</h3>
+<p>Status: <span class="status">● Active</span></p>
+<div class="count">{{ litter_events }}</div>
+<p>Total visits recorded</p>
 <form method="POST" action="/reset-litter">
-    <button type="submit">Reset Litter Box</button>
+    <button type="submit">Reset Litter Count</button>
 </form>
-
-<p class="note">
-Use this when you change the litter tray so weight changes
-are ignored in behaviour analysis.
-</p>
-
+<p class="note">Press this to reset the visit counter back to 0 when starting a new monitoring period.</p>
 </div>
-
 
 <!-- Food Sensor -->
-
 <div class="card">
-
-<h3>Food Bowl Sensor</h3>
-
-<p>Status: <span class="status">Active</span></p>
-
-<p>Total Events Recorded: {{ food_events }}</p>
-
+<h3>🍽️ Food Bowl Sensor</h3>
+<p>Status: <span class="status">● Active</span></p>
+<div class="count">{{ food_events }}</div>
+<p>Total visits recorded</p>
 <form method="POST" action="/reset-food">
-    <button type="submit">Reset Food Bowl</button>
+    <button type="submit">Reset Food Count</button>
 </form>
-
-<p class="note">
-Press this after refilling the food bowl so the system
-does not interpret the weight increase as eating behaviour.
-</p>
-
+<p class="note">Press this to reset the food activity counter back to 0 when starting a new monitoring period.</p>
 </div>
-
 
 <!-- Water Sensor -->
-
 <div class="card">
-
-<h3>Water Bowl Sensor</h3>
-
-<p>Status: <span class="status">Active</span></p>
-
-<p>Total Events Recorded: {{ water_events }}</p>
-
+<h3>💧 Water Bowl Sensor</h3>
+<p>Status: <span class="status">● Active</span></p>
+<div class="count">{{ water_events }}</div>
+<p>Total visits recorded</p>
 <form method="POST" action="/reset-water">
-    <button type="submit">Reset Water Bowl</button>
+    <button type="submit">Reset Water Count</button>
 </form>
-
-<p class="note">
-Press this after refilling the water bowl so the weight
-change is ignored in behaviour analytics.
-</p>
-
-</div>
-
-
-<!-- Hiding Sensor -->
-
-<div class="card">
-
-<h3>Hiding Area Motion Sensor</h3>
-
-<p>Status: <span class="status">Active</span></p>
-
-<p>Total Events Recorded: {{ hiding_events }}</p>
-
-<p class="note">
-This PIR motion sensor detects when the cat enters
-a hiding location such as under a bed or furniture.
-</p>
-
+<p class="note">Press this to reset the water activity counter back to 0 when starting a new monitoring period.</p>
 </div>
 
 </div>
-
 </div>
-
 </div>
-
 </body>
 </html>

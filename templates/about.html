@@ -2,98 +2,24 @@
 <html>
 <head>
 <title>About PurrMetrics</title>
-
 <style>
-
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f1b2e;
-    color:white;
-}
-
-.layout{
-    display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-    width:220px;
-    background:#111c34;
-    height:100vh;
-    padding:20px;
-}
-
-.sidebar h2{
-    color:#ffd43b;
-}
-
-.sidebar a{
-    display:block;
-    padding:10px;
-    margin:10px 0;
-    background:#1b2b4d;
-    color:white;
-    text-decoration:none;
-    border-radius:8px;
-}
-
-.sidebar a:hover{
-    background:#2e4577;
-}
-
-/* Main */
-
-.main{
-    flex:1;
-    padding:30px;
-}
-
-/* Cards */
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:20px;
-}
-
-.card{
-    background:#1a2d52;
-    padding:20px;
-    border-radius:15px;
-}
-
-.big-card{
-    background:#1a2d52;
-    padding:25px;
-    border-radius:15px;
-    margin-bottom:25px;
-    margin-top:40px;
-
-/* Tags */
-
-.tag{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:8px;
-    font-size:12px;
-    margin-right:5px;
-}
-
+body{margin:0;font-family:Arial;background:#0f1b2e;color:white;}
+.layout{display:flex;}
+.sidebar{width:220px;background:#111c34;height:100vh;padding:20px;}
+.sidebar h2{color:#ffd43b;}
+.sidebar a{display:block;padding:10px;margin:10px 0;background:#1b2b4d;color:white;text-decoration:none;border-radius:8px;}
+.sidebar a:hover{background:#2e4577;}
+.main{flex:1;padding:30px;}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.card{background:#1a2d52;padding:20px;border-radius:15px;}
+.big-card{background:#1a2d52;padding:25px;border-radius:15px;margin-bottom:25px;margin-top:20px;}
+.tag{display:inline-block;padding:6px 10px;border-radius:8px;font-size:12px;margin-right:5px;}
 </style>
-
 </head>
-
 <body>
-
 <div class="layout">
-
-<!-- Sidebar -->
-
 <div class="sidebar">
 <h2>PurrMetrics</h2>
-
 <a href="/profile">Profile</a>
 <a href="/home">Home</a>
 <a href="/dashboard">Analytics</a>
@@ -104,84 +30,49 @@ body{
 <a href="/detailed-analytics">Detailed Analytics</a>
 <a href="/logout" style="color:#ff6b6b;">Logout</a>
 </div>
-
-<!-- Main -->
-
 <div class="main">
-
 <h1>About PurrMetrics 🐱</h1>
-
 <div class="big-card">
-
-<p>
-PurrMetrics is a smart feline monitoring system designed to detect early signs of illness
-through behavioural tracking. Using sensors and data analysis, it monitors litter usage,
-food intake, water consumption, and hiding behaviour.
-</p>
-
+<p>PurrMetrics is a smart feline monitoring system designed to detect early signs of illness through behavioural tracking. Using Zigbee motion sensors and a Raspberry Pi, it monitors litter box usage, food bowl activity, and water consumption.</p>
 <br>
-
 <span class="tag" style="background:#3b82f6;">Flask</span>
 <span class="tag" style="background:#10b981;">SQLite</span>
-<span class="tag" style="background:#a855f7;">IoT Sensors</span>
-<span class="tag" style="background:#f43f5e;">Analytics</span>
-
+<span class="tag" style="background:#a855f7;">Zigbee Sensors</span>
+<span class="tag" style="background:#f43f5e;">Raspberry Pi</span>
+<span class="tag" style="background:#f97316;">MQTT</span>
 </div>
-
 <div class="grid">
-
 <div class="card">
 <h3>🐾 The Problem</h3>
-<p>
-Cats hide illness extremely well. By the time symptoms appear,
-it may already be serious.
-</p>
+<p>Cats hide illness extremely well. By the time symptoms appear, it may already be serious.</p>
 </div>
-
 <div class="card">
 <h3>💡 The Solution</h3>
-<p>
-We track subtle behaviour changes using sensors and visualise
-them through an intuitive dashboard.
-</p>
+<p>We track subtle behaviour changes using wireless motion sensors and visualise them through an intuitive dashboard.</p>
 </div>
-
 <div class="card">
 <h3>📊 What We Track</h3>
 <p>
-• Litter box usage<br>
-• Food intake<br>
-• Water consumption<br>
-• Hiding behaviour
+• Litter box visits<br>
+• Food bowl activity<br>
+• Water consumption
 </p>
 </div>
-
 <div class="card">
 <h3>🚀 The Benefit</h3>
-<p>
-Early detection of abnormal patterns helps owners act quickly
-and improve their cat’s health outcomes.
-</p>
+<p>Early detection of abnormal patterns helps owners act quickly and improve their cat's health outcomes.</p>
 </div>
-
 </div>
-
 <div class="big-card">
-
 <h3>👥 Team</h3>
-
 <p>
 Rae-Gene – Backend & Dashboard<br>
 Zilwood – Hardware & Sensors<br>
 George – Motion Detection<br>
 Asha – Frontend Design
 </p>
-
 </div>
-
 </div>
-
 </div>
-
 </body>
 </html>

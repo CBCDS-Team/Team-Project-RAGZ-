@@ -1,98 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>PurrMetrics Analytics</title>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#0f1b2e;
-color:white;
-}
-
-.layout{
-display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-width:220px;
-background:#111c34;
-height:100vh;
-padding:20px;
-}
-
-.sidebar h2{
-color:#ffd43b;
-}
-
-.sidebar a{
-display:block;
-padding:10px;
-margin:10px 0;
-background:#1b2b4d;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:#2e4577;
-}
-
-/* Main */
-
-.main{
-flex:1;
-padding:30px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:20px;
-}
-
-.card{
-background:#1a2d52;
-padding:20px;
-border-radius:15px;
-}
-
-.stat{
-font-size:28px;
-font-weight:bold;
-margin-top:10px;
-}
-
-.label{
-opacity:0.7;
-font-size:14px;
-margin-top:5px;
-}
-
-canvas{
-margin-top:15px;
-}
-
+body{margin:0;font-family:Arial;background:#0f1b2e;color:white;}
+.layout{display:flex;}
+.sidebar{width:220px;background:#111c34;height:100vh;padding:20px;}
+.sidebar h2{color:#ffd43b;}
+.sidebar a{display:block;padding:10px;margin:10px 0;background:#1b2b4d;color:white;text-decoration:none;border-radius:8px;}
+.sidebar a:hover{background:#2e4577;}
+.main{flex:1;padding:30px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.card{background:#1a2d52;padding:20px;border-radius:15px;}
+.stat{font-size:28px;font-weight:bold;margin-top:10px;}
+.label{opacity:0.7;font-size:14px;margin-top:5px;}
+canvas{margin-top:15px;}
 </style>
-
 </head>
-
 <body>
-
 <div class="layout">
-
 <div class="sidebar">
-
 <h2>PurrMetrics</h2>
-
 <a href="/profile">Profile</a>
 <a href="/home">Home</a>
 <a href="/dashboard">Analytics</a>
@@ -102,83 +31,41 @@ margin-top:15px;
 <a href="/calendar">Calendar</a>
 <a href="/detailed-analytics">Detailed Analytics</a>
 <a href="/logout" style="color:#ff6b6b;">Logout</a>
-
 </div>
-
 <div class="main">
-
 <h1>Analytics Dashboard</h1>
-
 <div class="grid">
 
 <!-- Litter Box -->
-
 <div class="card">
-
-<h3>Litter Box Usage</h3>
-
+<h3>🚽 Litter Box Usage</h3>
 <div class="label">Total Visits</div>
 <div class="stat">{{ litter_result }}</div>
-
 <canvas id="litterChart"></canvas>
-
 </div>
 
-
-<!-- Food Intake -->
-
+<!-- Food -->
 <div class="card">
-
-<h3>Food Intake</h3>
-
-<div class="label">Total Food Consumed</div>
-<div class="stat">{{ food_result }} g</div>
-
+<h3>🍽️ Food Bowl Activity</h3>
+<div class="label">Total Visits to Food Bowl</div>
+<div class="stat">{{ food_result }}</div>
 <canvas id="foodChart"></canvas>
-
 </div>
 
-
-<!-- Water Intake -->
-
+<!-- Water -->
 <div class="card">
-
-<h3>Water Intake</h3>
-
-<div class="label">Total Drinking Time</div>
-<div class="stat">{{ water_result }} sec</div>
-
+<h3>💧 Water Bowl Activity</h3>
+<div class="label">Total Time Drinking</div>
+<div class="stat">{{ water_result }}</div>
 <canvas id="waterChart"></canvas>
-
-</div>
-
-
-<!-- Hiding Behaviour -->
-
-<div class="card">
-
-<h3>Hiding Behaviour</h3>
-
-<div class="label">Average Hiding Duration</div>
-<div class="stat">{{ hiding_result }} sec</div>
-
-<canvas id="hidingChart"></canvas>
-
 </div>
 
 </div>
-
 </div>
-
 </div>
-
 
 <script>
-
-/* Litter Chart */
-
 const labels = {{ dates | tojson }};
-const data = {{ visits | tojson }};
 
 new Chart(document.getElementById("litterChart"), {
     type: "line",
@@ -186,70 +73,44 @@ new Chart(document.getElementById("litterChart"), {
         labels: labels,
         datasets: [{
             label: "Litter Box Visits",
-            data: data,
+            data: {{ visits | tojson }},
             borderColor: "#3b82f6",
             fill: false,
             tension: 0.3
         }]
     },
-    options: {
-        responsive: true
-    }
+    options: { responsive: true }
 });
-
-
-
-/* Food Chart */
 
 new Chart(document.getElementById("foodChart"), {
-type: "line",
-data: {
-labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-datasets: [{
-label: "Food (g)",
-data: {{ food_values | tojson }},
-borderColor: "#22c55e",
-fill:false,
-tension:0.3
-}]
-}
+    type: "line",
+    data: {
+        labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [{
+            label: "Food Bowl Visits",
+            data: {{ food_values | tojson }},
+            borderColor: "#22c55e",
+            fill: false,
+            tension: 0.3
+        }]
+    },
+    options: { responsive: true }
 });
-
-
-/* Water Chart */
 
 new Chart(document.getElementById("waterChart"), {
-type: "line",
-data: {
-labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-datasets: [{
-label: "Water (sec)",
-data: {{ water_values | tojson }},
-borderColor: "#38bdf8",
-fill:false,
-tension:0.3
-}]
-}
+    type: "line",
+    data: {
+        labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+        datasets: [{
+            label: "Water Time (sec)",
+            data: {{ water_values | tojson }},
+            borderColor: "#38bdf8",
+            fill: false,
+            tension: 0.3
+        }]
+    },
+    options: { responsive: true }
 });
-
-
-/* Hiding Chart */
-
-new Chart(document.getElementById("hidingChart"), {
-type: "line",
-data: {
-labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-datasets: [{
-label: "Hiding Time",
-data: {{ hiding_values | tojson }},
-borderColor: "#a855f7",
-fill:false,
-tension:0.3
-}]
-}
-});
-
 </script>
-
 </body>
 </html>
